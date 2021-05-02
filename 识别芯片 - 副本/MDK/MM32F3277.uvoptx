@@ -210,6 +210,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>binar_img</ItemText>
         </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>binary_img</ItemText>
+        </Ww>
       </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
