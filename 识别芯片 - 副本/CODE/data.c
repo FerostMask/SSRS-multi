@@ -21,7 +21,7 @@ unsigned short imgthrsod = 28000;
 //	识别状态
 unsigned char cjug_sta;
 //	左右边界（存列）
-unsigned char lefbor[EFF_ROW+1], rigbor[EFF_ROW+1], mid_point[EFF_ROW+1];
+unsigned char lefbor[MT9V03X_H], rigbor[MT9V03X_H], mid_point[MT9V03X_H];
 unsigned char lefp, rigp, midp;
 //	斜率
 float lefslope, rigslope, midslope;

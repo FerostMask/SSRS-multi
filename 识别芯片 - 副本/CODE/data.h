@@ -25,7 +25,7 @@
 /*======================*/
 extern unsigned char cjug_sta;
 //	Í¼Ïñver2
-extern unsigned char lefbor[EFF_ROW+1], rigbor[EFF_ROW+1], mid_point[EFF_ROW+1];
+extern unsigned char lefbor[MT9V03X_H], rigbor[MT9V03X_H], mid_point[MT9V03X_H];
 extern unsigned char lefp, rigp, midp;
 extern unsigned short imgthrsod;
 extern float lefslope, rigslope, midslope;

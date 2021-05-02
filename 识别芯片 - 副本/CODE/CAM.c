@@ -18,6 +18,54 @@
 /* 							 函数定义 							*/
 /*==============================================================*/
 /*------------------------------*/
+/*		  二值化显示模块		*/
+/*==============================*/
+void binary_disp(void){
+//	变量定义
+	register unsigned char i, j, k;
+	unsigned char column = MT9V03X_W>>3;
+	unsigned char binary_temp;
+//	图像显示
+	ips200_address_set(0,0,MT9V03X_W-1,MT9V03X_H-1);
+	for(i = 0; i < MT9V03X_H; i++){
+		for(j = 0; j < column; j++){
+			for(k = 8; k > 0; k--){
+				binary_temp = (binary_img[i][j]>>(k-1)) & 0x01;
+				if(binary_temp) ips200_wr_data16(WHITE);
+				else ips200_wr_data16(0xAE9C);
+			}
+		}
+	}
+//	显示基点
+//	for(k = 0; k < 8; k++)
+//		ips200_drawpoint(found_point[1]*8+k, found_point[0], 0x00);
+	ips200_drawpoint(lefbor[found_point[0]], found_point[0], 0x00);
+	ips200_drawpoint(lefbor[found_point[0]]+1, found_point[0], 0x00);
+	ips200_showint16(0, 9, fop_flag);
+//	for(k = 0; k < 8; k++)
+//		ips200_drawpoint(found_point[3]*8+k, found_point[2], 0x00);
+}
+/*------------------------------*/
+/*		 左边界点寻找模块		*/
+/*==============================*/
+void lbor_search(void){
+//	变量定义
+	register unsigned char i = found_point[0], k;
+	register char j = found_point[1];
+	unsigned char *p;
+//	从基准点开始寻找
+	p = &binary_img[i][j];
+	switch(fop_flag){
+		case 1:
+			for(k = 0; k < 7; k++)
+				if(((*p>>(k+1))&0x01)^((*p>>k)&0x01)){lefbor[i] = (j<<3)+6-k;break;}
+			break;
+		case 2:
+			lefbor[i] = (j<<3)+7;
+			break;
+	}
+}
+/*------------------------------*/
 /*		  基准点辅助模块		*/
 /*==============================*/
 static void fop_search_sup(char num, unsigned char* p, char j){
@@ -33,11 +81,11 @@ static void fop_search_sup(char num, unsigned char* p, char j){
 				}
 			if(*(p+1) != 0xFF)
 				if(*(p+1) != 0x00){//右视场突变
-					fop_flag = 2, found_point[0] = MT9V03X_H - 1, found_point[1] = j+1;
+					fop_flag = 1, found_point[0] = MT9V03X_H - 1, found_point[1] = j+1;
 					return;
 				}
 		//	左黑右白
-			fop_flag = 3, found_point[0] = MT9V03X_H - 1, found_point[1] = j;
+			fop_flag = 2, found_point[0] = MT9V03X_H - 1, found_point[1] = j;
 			return;
 	//	右基准点判断
 		case 2:
@@ -49,11 +97,11 @@ static void fop_search_sup(char num, unsigned char* p, char j){
 				}
 			if(*(p+1) != 0xFF)
 				if(*(p+1) != 0x00){//右视场突变
-					fop_flag = 2, found_point[2] = MT9V03X_H - 1, found_point[3] = j+1;
+					fop_flag = 1, found_point[2] = MT9V03X_H - 1, found_point[3] = j+1;
 					return;
 				}
 		//	左白右黑
-			fop_flag = 3, found_point[2] = MT9V03X_H - 1, found_point[3] = j+1;
+			fop_flag = 2, found_point[2] = MT9V03X_H - 1, found_point[3] = j+1;
 			return;
 	//	起始点判断
 		case 0:
@@ -100,7 +148,7 @@ static void fop_search(char num){
 			return;
 		}
 		p = &binary_img[i][10];
-		for(j = 10; j < 18; j++){
+		for(j = 10; j < 18; j++){//向右寻找，可能为右转
 			if(*(uint16*)p == 0x0000){p++;continue;}
 			fop_search_sup(1, p, j);
 			return;
@@ -124,7 +172,7 @@ static void fop_search(char num){
 			j = 0;
 			for(i = MT9V03X_H - 1; i > 0; i--){
 				if(!(binary_img[i][j]^binary_img[i-1][j])) continue;
-				fop_flag = 4, found_point[0] = i, found_point[1] = j;
+				fop_flag = 3, found_point[0] = i, found_point[1] = j;
 				return;
 			}
 			break;
@@ -140,129 +188,11 @@ static void fop_search(char num){
 			j = 19;
 			for(i = MT9V03X_H - 1; i > 0; i--){
 				if(!(binary_img[i][j]^binary_img[i-1][j])) continue;
-				fop_flag = 4, found_point[2] = i, found_point[3] = j;
+				fop_flag = 3, found_point[2] = i, found_point[3] = j;
 				return;
 			}
 			break;
 	}
-}
-/*------------------------------*/
-/*		  基准点寻找模块		*/
-/*==============================*/
-//static void fop_search(char num){
-////	变量定义
-//	register unsigned char i = MT9V03X_H - 1;
-//	register char j;
-//	unsigned char bina = 0, bina_temp;
-//	switch(num){
-//		case 1:
-//		//	起始点判断
-//			if(binary_img[i][9] == 0xFF) bina = 1;//白
-//			if(binary_img[i][9] == 0x00) bina = 2;//黑
-//			if(bina == 2){
-//				fop_flag = 0;
-//				if(binary_img[i][10] == 0xFF) found_point[0] = i, found_point[1] = 9, fop_flag = 1;//起始点为前后跳变
-//				return;
-//			}
-//			if(!bina){found_point[0] = i, found_point[1] = 9, fop_flag = 2;return;}//起始点为突变点
-//		//	左基点寻找
-//			for(j = 9; j > -1; j--){
-//			//	重置
-//				bina_temp = bina;
-//				bina = 0;
-//				if(binary_img[i][j] == 0xFF) bina = 1;//白
-//				if(binary_img[i][j] == 0x00) bina = 2;//黑
-//				if(!bina){found_point[0] = i, found_point[1] = j, fop_flag = 2;return;}//找到突变点
-//				if(bina!=bina_temp){//前后跳变
-//					fop_flag = 1;
-//					if(bina==1) j+=1;	
-//					found_point[0] = i, found_point[1] = j;
-//					return;
-//				}
-//			}
-//		//	未找到基点，向上寻找
-//			j = 0;
-//			for(i = MT9V03X_H - 1; i > 0; i--){
-//			//	重置
-//				bina_temp = bina;
-//				bina = 0;
-//				if(binary_img[i][j] == 0xFF) bina = 1;//白
-//				if(binary_img[i][j] == 0x00) bina = 2;//黑
-//				if(!bina){found_point[0] = i, found_point[1] = j, fop_flag = 2;return;}//找到突变点
-//				if(bina!=bina_temp){//上下跳变
-//					fop_flag = 3, found_point[0] = i, found_point[1] = j;
-//					return;
-//				}
-//			}
-//			break;
-//		case 2:
-//		//	起始点判断
-//			if(binary_img[i][10] == 0xFF) bina = 1;//白
-//			if(binary_img[i][10] == 0x00) bina = 2;//黑
-//			if(bina == 2){
-//				fop_flag = 0;
-//				if(binary_img[i][9] == 0xFF) found_point[2] = i, found_point[3] = 10, fop_flag = 1;//起始点为前后跳变
-//				return;
-//			}
-//			if(!bina){found_point[2] = i, found_point[3] = 10, fop_flag = 2;return;}//起始点为突变点
-//		//	右基点寻找
-//			for(j = 10; j < 20; j++){
-//			//	重置
-//				bina_temp = bina;
-//				bina = 0;
-//				if(binary_img[i][j] == 0xFF) bina = 1;//白
-//				if(binary_img[i][j] == 0x00) bina = 2;//黑
-//				if(!bina){found_point[2] = i, found_point[3] = j, fop_flag = 2;return;}//找到突变点
-//				if(bina!=bina_temp){//前后跳变
-//					fop_flag = 1;
-//					if(bina==1) j-=1;	
-//					found_point[2] = i, found_point[3] = j;
-//					return;
-//				}
-//			}
-//		//	未找到基点，向上寻找
-//			j = 19;
-//			for(i = MT9V03X_H - 1; i > 0; i--){
-//			//	重置
-//				bina_temp = bina;
-//				bina = 0;
-//				if(binary_img[i][j] == 0xFF) bina = 1;//白
-//				if(binary_img[i][j] == 0x00) bina = 2;//黑
-//				if(!bina){found_point[2] = i, found_point[3] = j, fop_flag = 2;return;}//找到突变点
-//				if(bina!=bina_temp){//上下跳变
-//					fop_flag = 3, found_point[2] = i, found_point[3] = j;
-//					return;
-//				}
-//			}
-//			break;
-//	}
-//}
-/*------------------------------*/
-/*		  二值化显示模块		*/
-/*==============================*/
-void binary_disp(void){
-//	变量定义
-	register unsigned char i, j, k;
-	unsigned char column = MT9V03X_W>>3;
-	unsigned char binary_temp;
-//	图像显示
-	ips200_address_set(0,0,MT9V03X_W-1,MT9V03X_H-1);
-	for(i = 0; i < MT9V03X_H; i++){
-		for(j = 0; j < column; j++){
-			for(k = 8; k > 0; k--){
-				binary_temp = (binary_img[i][j]>>(k-1)) & 0x01;
-				if(binary_temp) ips200_wr_data16(WHITE);
-				else ips200_wr_data16(0xAE9C);
-			}
-		}
-	}
-//	显示基点
-	for(k = 0; k < 8; k++)
-		ips200_drawpoint(found_point[1]*8+k, found_point[0], 0x00);
-	for(k = 0; k < 8; k++)
-		ips200_drawpoint(found_point[3]*8+k, found_point[2], 0x00);
-	ips200_showint16(0, 7, found_point[0]);
-	ips200_showint16(0, 8, found_point[1]);
 }
 /*------------------------------*/
 /*		  图像二值化模块		*/
@@ -282,7 +212,7 @@ void img_binary(void){
 				binary_img[i][j] <<= 1;
 				if(mt9v03x_image[i][j*8+k] > img_thrsod) binary_img[i][j] |= 0x01;
 			}
-		//	左边BUG处理
+		//	左右BUG处理
 			if(!j)
 				if(binary_img[i][0] == 127) binary_img[i][0] = 0xFF;
 			if(j == 19)
@@ -321,7 +251,8 @@ void otsu(void){
 	}
 	img_binary();
 	fop_search(1);
-	fop_search(2);
+	lbor_search();
+//	fop_search(2);
 	if(csimenu_flag[0]) binary_disp();
 	if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
 }
