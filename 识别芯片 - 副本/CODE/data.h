@@ -38,14 +38,16 @@ extern unsigned char found_point[4];
 extern unsigned char fop_flag;
 //	水平边界寻找
 extern unsigned char ltraf_point_row[10], rtraf_point_row[10], ltraf_point_col[10], rtraf_point_col[10];
+extern unsigned char ltraf_flag[10], rtraf_flag[10];
 extern unsigned char lcut, rcut;
 extern unsigned char ltraf_count, rtraf_count;
 //	转向判断
 extern unsigned char turn_flag;
 //	垂直边线寻找
 extern unsigned char upbor[MT9V03X_W-4], downbor[MT9V03X_W-4];
-extern unsigned char lefup_cut, lefdown_cut, rigup_cut, rigdown_cut;
-extern unsigned char in_vertical_flag[2], out_vertical_flag, vertical_li, vertical_ri;
+extern unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoint_col[5], rvet_trafpoint_col[5];
+extern unsigned char lvet_trafcount, rvet_trafcount;
+extern unsigned char lef_cut, rig_cut;
 //
 /*----------------------*/
 /*	 	 电磁模块		*/

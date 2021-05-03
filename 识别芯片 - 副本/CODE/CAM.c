@@ -43,6 +43,7 @@ void binary_disp(void){
 //	显示边界
 	for(i = MT9V03X_H - 1; i > lcut; i--) ips200_drawpoint(lefbor[i], i, 0x00);
 	for(i = MT9V03X_H - 1; i > rcut; i--) ips200_drawpoint(rigbor[i], i, 0x00);
+//	显示转变点
 	for(i = 0; i < ltraf_count; i++){
 		ips200_drawpoint(ltraf_point_col[i], ltraf_point_row[i], 0xFDEB);
 		ips200_drawpoint(ltraf_point_col[i]+1, ltraf_point_row[i], 0xFDEB);
@@ -50,6 +51,17 @@ void binary_disp(void){
 		ips200_drawpoint(ltraf_point_col[i]+3, ltraf_point_row[i], 0xFDEB);
 		ips200_drawpoint(ltraf_point_col[i]+4, ltraf_point_row[i], 0xFDEB);
 	}
+	for(i = 0; i < lvet_trafcount; i++){
+		ips200_drawpoint(lvet_trafpoint_col[i], lvet_trafpoint_row[i], 0xFD10);
+		ips200_drawpoint(lvet_trafpoint_col[i]+1, lvet_trafpoint_row[i], 0xFD10);
+		ips200_drawpoint(lvet_trafpoint_col[i]+2, lvet_trafpoint_row[i], 0xFD10);
+		ips200_drawpoint(lvet_trafpoint_col[i]+3, lvet_trafpoint_row[i], 0xFD10);
+		ips200_drawpoint(lvet_trafpoint_col[i]+4, lvet_trafpoint_row[i], 0xFD10);
+	}
+	ips200_showint16(0, 8, ltraf_count);
+	ips200_showint16(0, 9, lvet_trafcount);
+	ips200_showint16(0, 10, lvet_trafpoint_col[0]);
+	ips200_showint16(0, 11, lvet_trafpoint_row[0]);
 //	ips200_showint16(0, 8, turn_flag);
 //	ips200_showint16(0, 9, out_vertical_flag[0]);
 }
@@ -57,7 +69,29 @@ void binary_disp(void){
 /*	    垂直边界点寻找模块		*/
 /*==============================*/
 void border_vertical_search(char num){
-
+//	变量定义
+	register unsigned char i, k;
+	register char j;
+	unsigned char col = (MT9V03X_W-4)>>3;//换行
+	unsigned char *p;
+	unsigned char vetflag;
+	unsigned char vet_colmax, vet_rowmax;
+//	垂直边界寻找
+	switch(num){
+		case 1:
+		//	变量初始化
+			lvet_trafcount = 0;
+			if(ltraf_count > 1)
+				for(i = 1; i < ltraf_count; i++){
+					if(ltraf_flag[i] == 0)
+						if(ltraf_flag[i-1] == 1){//左外凸
+							for(k = ltraf_point_row[i], vet_colmax = 0; k < ltraf_point_row[i-1]; k++) 
+								if(lefbor[k] > vet_colmax) vet_colmax = lefbor[k], vet_rowmax = k; 
+							lvet_trafpoint_row[lvet_trafcount] = vet_rowmax, lvet_trafpoint_col[lvet_trafcount] = vet_colmax, lvet_trafcount++;
+						}
+				}
+			break;
+	}
 }
 /*------------------------------*/
 /*		 左边界点寻找模块		*/
@@ -93,8 +127,12 @@ void lbor_search(void){
 	//	初始化换行、方向检测
 		p -= col;
 		if(traf_flag!=traf_flag_temp) 
-			if(i < 90)
-				ltraf_count++, ltraf_point_row[ltraf_count] = i+1, ltraf_point_col[ltraf_count] = lefbor[i+1];
+			if(i < 90)//不检测最底下的转变点
+				if(ltraf_point_row[ltraf_count-1]-i>5 || ltraf_count == 0){//限制转变点高度
+					if(traf_flag == 1) ltraf_flag[ltraf_count] = 0;//从右到左转变
+					else ltraf_flag[ltraf_count] = 1;//从左到右转变
+					ltraf_point_row[ltraf_count] = i+1, ltraf_point_col[ltraf_count] = lefbor[i+1], ltraf_count++;
+				}
 		traf_flag_temp = traf_flag;
 		traf_flag = 0;
 		if(*(p+1) != 0x00)
@@ -445,7 +483,7 @@ void otsu(void){
 		if(abs(found_point[2]-lcut)<5) turn_flag = 12;
 	} 
 //	垂直边界检测
-
+	if(ltraf_count) border_vertical_search(1); 
 //	图像显示
 	if(csimenu_flag[0]) binary_disp();
 	if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);

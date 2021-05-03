@@ -34,14 +34,16 @@ unsigned char fop_flag;
 //	水平边线寻找
 unsigned char lefbor[MT9V03X_H], rigbor[MT9V03X_H], mid_point[MT9V03X_H];
 unsigned char ltraf_point_row[10], rtraf_point_row[10], ltraf_point_col[10], rtraf_point_col[10];
+unsigned char ltraf_flag[10], rtraf_flag[10];
 unsigned char ltraf_count, rtraf_count;
 unsigned char lcut, rcut;
 //	转向判断
 unsigned char turn_flag;
 //	垂直边线寻找
 unsigned char upbor[MT9V03X_W-4], downbor[MT9V03X_W-4];
-unsigned char lefup_cut, lefdown_cut, rigup_cut, rigdown_cut;
-unsigned char in_vertical_flag[2], out_vertical_flag, vertical_li, vertical_ri; 
+unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoint_col[5], rvet_trafpoint_col[5];
+unsigned char lvet_trafcount, rvet_trafcount;
+unsigned char lef_cut, rig_cut; 
 /*----------------------*/
 /*	 	 电磁模块		*/
 /*======================*/
