@@ -21,18 +21,20 @@ unsigned short imgthrsod = 28000;
 //	识别状态
 unsigned char cjug_sta;
 //	左右边界（存列）
-unsigned char lefbor[MT9V03X_H], rigbor[MT9V03X_H], mid_point[MT9V03X_H];
 unsigned char lefp, rigp, midp;
 //	斜率
 float lefslope, rigslope, midslope;
 //	ver3
 float P[256] = {0}, PK[256] = {0}, MK[256] = {0};
-unsigned char gray_img[MT9V03X_H][MT9V03X_W];
-unsigned char binary_img[MT9V03X_H][MT9V03X_W/8];
+unsigned char binary_img[MT9V03X_H][(MT9V03X_W-4)/8];
 unsigned char img_thrsod;
 //	基准点寻找
 unsigned char found_point[4];
 unsigned char fop_flag;
+//	边线寻找
+unsigned char lefbor[MT9V03X_H], rigbor[MT9V03X_H], mid_point[MT9V03X_H];
+unsigned char ltraf_point[4], rtraf_point[4];
+unsigned char lcut, rcut;
 /*----------------------*/
 /*	 	 电磁模块		*/
 /*======================*/

@@ -31,12 +31,12 @@ extern unsigned short imgthrsod;
 extern float lefslope, rigslope, midslope;
 //	ver3
 extern float P[256], PK[256], MK[256];
-extern unsigned char gray_img[MT9V03X_H][MT9V03X_W];
-extern unsigned char binary_img[MT9V03X_H][MT9V03X_W/8];
+extern unsigned char binary_img[MT9V03X_H][(MT9V03X_W-4)/8];
 extern unsigned char img_thrsod;
 //	±ß½çÑ°ÕÒ
 extern unsigned char found_point[4];
 extern unsigned char fop_flag;
+extern unsigned char lcut, rcut;
 /*----------------------*/
 /*	 	 µç´ÅÄ£¿é		*/
 /*======================*/
