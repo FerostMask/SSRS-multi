@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F3277.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F3277.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon May 03 14:27:09 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 04 01:15:43 2021
 <BR><P>
 <H3>Maximum Stack Usage =       1136 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -936,8 +936,8 @@ Global Symbols
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;camera_tim_etr_init
 </UL>
 
-<P><STRONG><a name="[8e]"></a>binary_disp</STRONG> (Thumb, 168 bytes, Stack size 32 bytes, cam.o(i.binary_disp))
-<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = binary_disp &rArr; ips200_drawpoint &rArr; ips200_address_set &rArr; ips200_wr_data16
+<P><STRONG><a name="[8e]"></a>binary_disp</STRONG> (Thumb, 260 bytes, Stack size 24 bytes, cam.o(i.binary_disp))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = binary_disp &rArr; ips200_drawpoint &rArr; ips200_address_set &rArr; ips200_wr_data16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_wr_data16
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_drawpoint
@@ -1239,8 +1239,8 @@ Global Symbols
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_init
 </UL>
 
-<P><STRONG><a name="[de]"></a>lbor_search</STRONG> (Thumb, 796 bytes, Stack size 20 bytes, cam.o(i.lbor_search))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = lbor_search
+<P><STRONG><a name="[de]"></a>lbor_search</STRONG> (Thumb, 1110 bytes, Stack size 24 bytes, cam.o(i.lbor_search))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = lbor_search
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;otsu
 </UL>
@@ -1371,8 +1371,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = mt9v03x_init &rArr; mt9v03x_dma_init &rArr; camera_dma_init &rArr; DMA_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_rx_irq
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;systick_delay_ms
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_rx_irq
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_config
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_tim1_etr_init
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_exti_init
@@ -1414,8 +1414,8 @@ Global Symbols
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_dma_init
 </UL>
 
-<P><STRONG><a name="[c9]"></a>otsu</STRONG> (Thumb, 402 bytes, Stack size 568 bytes, cam.o(i.otsu))
-<BR><BR>[Stack]<UL><LI>Max Depth = 640<LI>Call Chain = otsu &rArr; binary_disp &rArr; ips200_drawpoint &rArr; ips200_address_set &rArr; ips200_wr_data16
+<P><STRONG><a name="[c9]"></a>otsu</STRONG> (Thumb, 468 bytes, Stack size 568 bytes, cam.o(i.otsu))
+<BR><BR>[Stack]<UL><LI>Max Depth = 632<LI>Call Chain = otsu &rArr; ips200_displayimage032 &rArr; ips200_address_set &rArr; ips200_wr_data16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_displayimage032
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
@@ -1472,17 +1472,17 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;zf_sprintf
 </UL>
 
-<P><STRONG><a name="[df]"></a>rbor_search</STRONG> (Thumb, 804 bytes, Stack size 20 bytes, cam.o(i.rbor_search))
+<P><STRONG><a name="[df]"></a>rbor_search</STRONG> (Thumb, 838 bytes, Stack size 20 bytes, cam.o(i.rbor_search))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = rbor_search
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;otsu
 </UL>
 
 <P><STRONG><a name="[d9]"></a>set_config</STRONG> (Thumb, 110 bytes, Stack size 24 bytes, seekfree_mt9v03x.o(i.set_config))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = set_config &rArr; uart_putbuff
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = set_config &rArr; systick_delay_ms
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_putbuff
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;systick_delay_ms
+<BR>[Calls]<UL><LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;systick_delay_ms
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_putbuff
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_init
 </UL>

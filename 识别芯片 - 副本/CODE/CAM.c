@@ -25,7 +25,6 @@ void binary_disp(void){
 	register unsigned char i, j, k;
 	unsigned char column = (MT9V03X_W-4)>>3;
 	unsigned char binary_temp;
-	unsigned char left_effrow = lcut-1, right_effrow = rcut-1;
 //	图像显示
 	ips200_address_set(0,0,MT9V03X_W-5,MT9V03X_H-1);
 	for(i = 0; i < MT9V03X_H; i++){
@@ -42,8 +41,23 @@ void binary_disp(void){
 //	ips200_drawpoint(lefbor[found_point[0]], found_point[0], 0XFDF8);
 //	ips200_drawpoint(rigbor[found_point[2]], found_point[2], 0XFDF8);
 //	显示边界
-	for(i = MT9V03X_H - 1; i > left_effrow; i--) ips200_drawpoint(lefbor[i], i, 0x00);
-	for(i = MT9V03X_H - 1; i > right_effrow; i--) ips200_drawpoint(rigbor[i], i, 0x00);
+	for(i = MT9V03X_H - 1; i > lcut; i--) ips200_drawpoint(lefbor[i], i, 0x00);
+	for(i = MT9V03X_H - 1; i > rcut; i--) ips200_drawpoint(rigbor[i], i, 0x00);
+	for(i = 0; i < ltraf_count; i++){
+		ips200_drawpoint(ltraf_point_col[i], ltraf_point_row[i], 0xFDEB);
+		ips200_drawpoint(ltraf_point_col[i]+1, ltraf_point_row[i], 0xFDEB);
+		ips200_drawpoint(ltraf_point_col[i]+2, ltraf_point_row[i], 0xFDEB);
+		ips200_drawpoint(ltraf_point_col[i]+3, ltraf_point_row[i], 0xFDEB);
+		ips200_drawpoint(ltraf_point_col[i]+4, ltraf_point_row[i], 0xFDEB);
+	}
+//	ips200_showint16(0, 8, turn_flag);
+//	ips200_showint16(0, 9, out_vertical_flag[0]);
+}
+/*------------------------------*/
+/*	    垂直边界点寻找模块		*/
+/*==============================*/
+void border_vertical_search(char num){
+
 }
 /*------------------------------*/
 /*		 左边界点寻找模块		*/
@@ -53,10 +67,10 @@ void lbor_search(void){
 	register unsigned char i = found_point[0], k;
 	register char j = found_point[1];
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
-	unsigned direct = 2, direct_temp;//方向
 	unsigned char *p;
+	unsigned char traf_flag, traf_flag_temp;
 //	初始化
-	lcut = 0;
+	lcut = 0, turn_flag = 0, ltraf_count = 0;
 //	从基准点开始寻找
 	p = &binary_img[i][j];
 	switch(fop_flag){
@@ -70,13 +84,19 @@ void lbor_search(void){
 		case 3://基准点不在底下
 			for(k = 0; k < 7; k++)
 				if(((*p>>(k+1))&0x01)^((*p>>k)&0x01)){lefbor[i] = (j<<3)+6-k;break;}
+			turn_flag = 1;
 			for(k = MT9V03X_H - 1; k > i; k--) lefbor[k] = 0;
 			break;
 	}
 //	向上检测
 	for(; i > 0; i--){
-	//	换行、方向检测
+	//	初始化换行、方向检测
 		p -= col;
+		if(traf_flag!=traf_flag_temp) 
+			if(i < 90)
+				ltraf_count++, ltraf_point_row[ltraf_count] = i+1, ltraf_point_col[ltraf_count] = lefbor[i+1];
+		traf_flag_temp = traf_flag;
+		traf_flag = 0;
 		if(*(p+1) != 0x00)
 			if(*(p+1) != 0xff){//右突变
 				for(k = 0; k < 7; k++)
@@ -119,7 +139,7 @@ void lbor_search(void){
 				if(*(uint16*)p == 0xFFFF) continue;
 				else break;
 			}
-			if(j == -1){lcut = i;return;}
+			if(j == -1){lcut = i;traf_flag = 1,j++,p++,lefbor[i] = 0;continue;}//抵达全白边界
 			if(*(uint16*)p == 0xFF00){lefbor[i] = (j<<3)+7;continue;}//左黑右白跳变
 			if(*(uint16*)p == 0x00FF){lefbor[i] = (j+1)<<3;continue;}//左白右黑跳变
 			if(*p != 0x00)
@@ -162,6 +182,8 @@ void rbor_search(void){
 		case 3:
 			for(k = 7; k > 0; k--)
 				if(((*p>>k)&0x01)^((*p>>(k-1))&0x01)){rigbor[i] = (j<<3)+8-k;break;}
+			if(turn_flag == 1) turn_flag = 3;
+			else turn_flag = 2;
 			for(k = MT9V03X_H - 1; k > i; k--) rigbor[k] = 159;
 			break;
 	}
@@ -213,7 +235,7 @@ void rbor_search(void){
 				if(*(uint16*)p == 0xFFFF) continue;
 				else break;
 			}
-			if(j == 19){rcut = i;return;}
+			if(j == 19){rcut = i;j--,p--,rigbor[i] = 159;continue;}
 			if(*(uint16*)p == 0x00FF){rigbor[i] = ((j+1)<<3);continue;}//左白右黑跳变
 			if(*(uint16*)p == 0xFF00){rigbor[i] = (j<<3)+7;continue;}//左黑右白跳变
 			if(*(p+1) != 0x00)
@@ -410,11 +432,21 @@ void otsu(void){
 			img_thrsod = i;//输出阈值
 		}
 	}
+//	二值化
 	img_binary();
+//	寻找基点、找边线（注意寻找顺序，左右转判断基于先左后右的边线寻找
 	fop_search(1);
 	lbor_search();
 	fop_search(2);
 	rbor_search();
+//	判断是否为左右转（注意寻找顺序
+	if(turn_flag){
+		if(abs(found_point[0]-rcut)<5) turn_flag = 11;
+		if(abs(found_point[2]-lcut)<5) turn_flag = 12;
+	} 
+//	垂直边界检测
+
+//	图像显示
 	if(csimenu_flag[0]) binary_disp();
 	if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
 }

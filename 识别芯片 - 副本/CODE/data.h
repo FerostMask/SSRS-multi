@@ -33,10 +33,20 @@ extern float lefslope, rigslope, midslope;
 extern float P[256], PK[256], MK[256];
 extern unsigned char binary_img[MT9V03X_H][(MT9V03X_W-4)/8];
 extern unsigned char img_thrsod;
-//	边界寻找
+//	基准点寻找
 extern unsigned char found_point[4];
 extern unsigned char fop_flag;
+//	水平边界寻找
+extern unsigned char ltraf_point_row[10], rtraf_point_row[10], ltraf_point_col[10], rtraf_point_col[10];
 extern unsigned char lcut, rcut;
+extern unsigned char ltraf_count, rtraf_count;
+//	转向判断
+extern unsigned char turn_flag;
+//	垂直边线寻找
+extern unsigned char upbor[MT9V03X_W-4], downbor[MT9V03X_W-4];
+extern unsigned char lefup_cut, lefdown_cut, rigup_cut, rigdown_cut;
+extern unsigned char in_vertical_flag[2], out_vertical_flag, vertical_li, vertical_ri;
+//
 /*----------------------*/
 /*	 	 电磁模块		*/
 /*======================*/
