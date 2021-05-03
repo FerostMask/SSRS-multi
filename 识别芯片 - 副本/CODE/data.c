@@ -35,6 +35,9 @@ unsigned char fop_flag;
 unsigned char lefbor[MT9V03X_H], rigbor[MT9V03X_H], mid_point[MT9V03X_H];
 unsigned char ltraf_point[4], rtraf_point[4];
 unsigned char lcut, rcut;
+//	上下边线寻找
+unsigned char upbor[MT9V03X_W-4], downbor[MT9V03X_W-4];
+unsigned char lefup_cut, lefdown_cut, rigup_cut, rigdown_cut; 
 /*----------------------*/
 /*	 	 电磁模块		*/
 /*======================*/
