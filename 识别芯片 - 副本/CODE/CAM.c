@@ -45,11 +45,11 @@ void binary_disp(void){
 	for(i = MT9V03X_H - 1; i > rcut; i--) ips200_drawpoint(rigbor[i], i, 0x00);
 //	显示转变点
 	for(i = 0; i < ltraf_count; i++){//左边界转变
-		ips200_drawpoint(ltraf_point_col[i], ltraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(ltraf_point_col[i]+1, ltraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(ltraf_point_col[i]+2, ltraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(ltraf_point_col[i]+3, ltraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(ltraf_point_col[i]+4, ltraf_point_row[i], 0xFDEB);
+		ips200_drawpoint(ltraf_point_col[i], ltraf_point_row[i], 0x32D5);
+		ips200_drawpoint(ltraf_point_col[i]+1, ltraf_point_row[i], 0x32D5);
+		ips200_drawpoint(ltraf_point_col[i]+2, ltraf_point_row[i], 0x32D5);
+		ips200_drawpoint(ltraf_point_col[i]+3, ltraf_point_row[i], 0x32D5);
+		ips200_drawpoint(ltraf_point_col[i]+4, ltraf_point_row[i], 0x32D5);
 	}
 	for(i = 0; i < lvet_trafcount; i++){//左转变点
 		ips200_drawpoint(lvet_trafpoint_col[i], lvet_trafpoint_row[i], 0xFD10);
@@ -59,11 +59,11 @@ void binary_disp(void){
 		ips200_drawpoint(lvet_trafpoint_col[i]+4, lvet_trafpoint_row[i], 0xFD10);
 	}
 	for(i = 0; i < rtraf_count; i++){//右边界转变
-		ips200_drawpoint(rtraf_point_col[i], rtraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(rtraf_point_col[i]-1, rtraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(rtraf_point_col[i]-2, rtraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(rtraf_point_col[i]-3, rtraf_point_row[i], 0xFDEB);
-		ips200_drawpoint(rtraf_point_col[i]-4, rtraf_point_row[i], 0xFDEB);
+		ips200_drawpoint(rtraf_point_col[i], rtraf_point_row[i], 0x32D5);
+		ips200_drawpoint(rtraf_point_col[i]-1, rtraf_point_row[i], 0x32D5);
+		ips200_drawpoint(rtraf_point_col[i]-2, rtraf_point_row[i], 0x32D5);
+		ips200_drawpoint(rtraf_point_col[i]-3, rtraf_point_row[i], 0x32D5);
+		ips200_drawpoint(rtraf_point_col[i]-4, rtraf_point_row[i], 0x32D5);
 	}
 	for(i = 0; i < rvet_trafcount; i++){//右转变点
 		ips200_drawpoint(rvet_trafpoint_col[i], rvet_trafpoint_row[i], 0xFD10);
@@ -72,12 +72,17 @@ void binary_disp(void){
 		ips200_drawpoint(rvet_trafpoint_col[i]-3, rvet_trafpoint_row[i], 0xFD10);
 		ips200_drawpoint(rvet_trafpoint_col[i]-4, rvet_trafpoint_row[i], 0xFD10);
 	}
-	ips200_showint16(0, 8, rtraf_count);
-	ips200_showint16(0, 9, rvet_trafcount);
-	ips200_showint16(0, 10, rvet_trafpoint_col[0]);
-	ips200_showint16(0, 11, rvet_trafpoint_row[0]);
-	ips200_showint16(20, 12, rtraf_point_row[0]);//32
-	ips200_showint16(20, 13, rtraf_point_row[1]);//11
+//	显示出口
+	for(i = 0; i < exti_lefcount; i++){
+		ips200_drawpoint(0, exti_lefp[i], 0xB20E);
+		ips200_drawpoint(1, exti_lefp[i], 0xB20E);
+		ips200_drawpoint(2, exti_lefp[i], 0xB20E);
+	}
+	for(i = 0; i < exti_rigcount; i++){
+		ips200_drawpoint(157, exti_rigp[i], 0xB20E);
+		ips200_drawpoint(158, exti_rigp[i], 0xB20E);
+		ips200_drawpoint(159, exti_rigp[i], 0xB20E);
+	}
 //	ips200_showint16(0, 8, turn_flag);
 //	ips200_showint16(0, 9, out_vertical_flag[0]);
 }
@@ -96,28 +101,36 @@ void border_vertical_search(char num){
 	switch(num){
 		case 1:
 		//	变量初始化
-			lvet_trafcount = 0;
+			lvet_trafcount = 0, exti_lefcount = 0;
 			if(ltraf_count > 1)
 				for(i = 1; i < ltraf_count; i++){
+				//	左外凸
 					if(ltraf_flag[i] == 0)
-						if(ltraf_flag[i-1] == 1){//左外凸
+						if(ltraf_flag[i-1] == 1){
 							for(k = ltraf_point_row[i], vet_colmax = 0; k < ltraf_point_row[i-1]; k++) 
 								if(lefbor[k] > vet_colmax) vet_colmax = lefbor[k], vet_rowmax = k; 
 							lvet_trafpoint_row[lvet_trafcount] = vet_rowmax, lvet_trafpoint_col[lvet_trafcount] = vet_colmax, lvet_trafcount++;
 						}
-				}
+				//	出口
+					if(ltraf_flag[i] == 1)
+						if(ltraf_flag[i-1] == 0) exti_lefp[exti_lefcount] = (ltraf_point_row[i]+ltraf_point_row[i-1])>>1, exti_lefcount++;
+				}	
 			break;
 		case 2:
 		//	变量初始化
-			rvet_trafcount = 0;
+			rvet_trafcount = 0, exti_rigcount = 0;
 			if(rtraf_count > 1)
 				for(i = 1; i < rtraf_count; i++){
+				//	右外凸
 					if(rtraf_flag[i] == 0)
-						if(rtraf_flag[i-1] == 1){//右外凸
+						if(rtraf_flag[i-1] == 1){
 							for(k = rtraf_point_row[i], vet_colmax = 159; k < rtraf_point_row[i-1]; k++) 
 								if(rigbor[k] < vet_colmax) vet_colmax = rigbor[k], vet_rowmax = k; 
 							rvet_trafpoint_row[rvet_trafcount] = vet_rowmax, rvet_trafpoint_col[rvet_trafcount] = vet_colmax, rvet_trafcount++;
 						}
+				//	出口
+					if(rtraf_flag[i] == 1)
+						if(rtraf_flag[i-1] == 0) exti_rigp[exti_rigcount] = (rtraf_point_row[i]+rtraf_point_row[i-1])>>1, exti_rigcount++;	
 				}
 			break;
 	}
