@@ -47,7 +47,7 @@ extern unsigned char turn_flag;
 extern unsigned char upbor[MT9V03X_W-4], downbor[MT9V03X_W-4];
 extern unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoint_col[5], rvet_trafpoint_col[5];
 extern unsigned char lvet_trafcount, rvet_trafcount;
-extern unsigned char lef_cut, rig_cut;
+extern unsigned char lefup_cut, lefdown_cut, rigup_cut, rigdown_cut;//Ωÿ÷π¡–
 extern unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;
 //
 /*----------------------*/

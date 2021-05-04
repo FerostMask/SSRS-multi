@@ -13,7 +13,9 @@
 /*--------------------------------------------------------------*/
 /* 							 变量定义 							*/
 /*==============================================================*/
-
+unsigned short img_color = 0xAE9C;
+unsigned char lef_riseflag;
+unsigned char act_flag;
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/
@@ -32,7 +34,7 @@ void binary_disp(void){
 			for(k = 8; k > 0; k--){
 				binary_temp = (binary_img[i][j]>>(k-1)) & 0x01;
 				if(binary_temp) ips200_wr_data16(WHITE);
-				else ips200_wr_data16(0xAE9C);
+				else ips200_wr_data16(img_color);
 			}
 		}
 	}
@@ -83,25 +85,99 @@ void binary_disp(void){
 		ips200_drawpoint(158, exti_rigp[i], 0xB20E);
 		ips200_drawpoint(159, exti_rigp[i], 0xB20E);
 	}
+//	显示垂直边线
+//	for(i = 0; i < lefup_cut; i++) ips200_drawpoint(i, upbor[i], 0xA6AE);
+	for(i = 0; i < lefdown_cut; i++){
+		ips200_drawpoint(i, downbor[i], 0x00);
+		ips200_drawpoint(i, downbor[i]+1, 0x00);
+	}
+	ips200_showint16(0, 10, act_flag);
 //	ips200_showint16(0, 8, turn_flag);
 //	ips200_showint16(0, 9, out_vertical_flag[0]);
+}
+/*------------------------------*/
+/*	    	状态机模块			*/
+/*==============================*/
+void state_machine(void){
+//	变量定义
+	static unsigned char state, state_temp;
+//	状态检测
+	state_temp = state; state = 0;
+	if(turn_flag == 11) state = 1;//左转
+	if(turn_flag == 12) state = 2;//右转
+//	圆环检测
+	if(exti_lefcount > 0)//检测左环
+		if(exti_rigcount == 0)
+				if(lvet_trafcount > 0){
+					if(lef_riseflag) state = 11;//左入环
+					if(state!=11)if(lvet_trafcount > 1) state = 12;//左过环
+	}
+//	左出环检测
+	if(act_flag == 3)
+		if(exti_rigcount > 0)
+			state = 13;
+	if(act_flag == 4)
+		if(lvet_trafcount > 0)
+			state = 14;
+	if(act_flag == 5){
+//		if(turn_flag == 11|| turn_flag == 12) state = 15;
+		if(turn_flag != 1)
+			if(turn_flag != 3)
+				if(ltraf_count == 0)
+					if(rtraf_count == 0)
+						state = 15;
+	}
+//	十字检测（粗略
+//	if(exti_lefcount > 0)
+//		if(exti_rigcount >0){
+//			if(abs(exti_lefp[0] - exti_rigp[0]) < 5) img_color = 0xED2A, state = 20;//十字
+//		}
+//	状态机
+	if(state_temp!=state){//检测到状态跳变
+	//	直道进圆环过环（左环
+		if(act_flag == 0)
+			if(state == 12)
+				act_flag = 1, img_color = 0xBDB8;
+	//	过环到圆环进环（左环
+		if(act_flag == 1)
+			if(state == 11)
+				act_flag = 2, img_color = 0xFDEB;
+	//	进环后到出环（左环
+		if(act_flag == 2)
+			if(state == 1)
+				act_flag = 3, img_color = 0xED2A;
+	//	环内到出环（左环
+		if(act_flag == 3)
+			if(state == 13)
+				act_flag = 4, img_color = 0x31A7;
+	//	出环后离开环道（左环
+		if(act_flag == 4)
+			if(state == 14)
+				act_flag = 5, img_color = 0x64D0;
+	//	由环道进入其他赛道
+		if(act_flag == 5)
+			if(state == 0)
+				act_flag = 0, img_color = 0xAE9C;
+	}
 }
 /*------------------------------*/
 /*	    垂直边界点寻找模块		*/
 /*==============================*/
 void border_vertical_search(char num){
 //	变量定义
-	register unsigned char i, k;
+	register unsigned char i, k, k2;
 	register char j;
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
 	unsigned char *p;
 	unsigned char vetflag;
 	unsigned char vet_colmax, vet_rowmax;
+	unsigned char found_flag, view_temp;
 //	垂直边界寻找
 	switch(num){
 		case 1:
 		//	变量初始化
-			lvet_trafcount = 0, exti_lefcount = 0;
+			lvet_trafcount = 0, exti_lefcount = 0, lef_riseflag = 0;
+			lefup_cut = 0, lefdown_cut = 0;
 			if(ltraf_count > 1)
 				for(i = 1; i < ltraf_count; i++){
 				//	左外凸
@@ -110,6 +186,7 @@ void border_vertical_search(char num){
 							for(k = ltraf_point_row[i], vet_colmax = 0; k < ltraf_point_row[i-1]; k++) 
 								if(lefbor[k] > vet_colmax) vet_colmax = lefbor[k], vet_rowmax = k; 
 							lvet_trafpoint_row[lvet_trafcount] = vet_rowmax, lvet_trafpoint_col[lvet_trafcount] = vet_colmax, lvet_trafcount++;
+							if(vet_rowmax - ltraf_point_row[i] > 5) lef_riseflag = 1;
 						}
 				//	出口
 					if(ltraf_flag[i] == 1)
@@ -535,7 +612,9 @@ void otsu(void){
 	} 
 //	垂直边界检测
 	if(ltraf_count) border_vertical_search(1);
-	if(rtraf_count) border_vertical_search(2);	
+	if(rtraf_count) border_vertical_search(2);
+//	状态机
+	state_machine();
 //	图像显示
 	if(csimenu_flag[0]) binary_disp();
 	if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
