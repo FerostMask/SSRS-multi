@@ -92,7 +92,12 @@ void binary_disp(void){
 		ips200_drawpoint(i, bottombor[i], 0x74ec);
 	for(i = 0; i < leftop_cut; i++)
 		ips200_drawpoint(i,topbor[i], 0x74ec);
-	
+	for(i = 159; i > rigbottom_cut; i--)
+		ips200_drawpoint(i, bottombor[i], 0x74ec);
+	for(i = 159; i > rigtop_cut; i--)
+		ips200_drawpoint(i, topbor[i], 0x74ec);
+
+	ips200_showint16(160, 0, act_flag);	
 //	ips200_drawpoint(0, show_point+1, RED);
 //	ips200_drawpoint(0, show_point+2, RED);
 //	ips200_drawpoint(0, show_point+1, RED);
@@ -102,7 +107,7 @@ void binary_disp(void){
 //	ips200_drawpoint(bottombor[8]+1, 8, RED);
 //	ips200_drawpoint(bottombor[8], 9, RED);
 //	ips200_drawpoint(bottombor[8]+1, 9, RED);
-	ips200_showint16(160, 0, act_flag);
+
 //	ips200_showint16(0, 8, turn_flag);
 //	ips200_showint16(0, 9, out_vertical_flag[0]);
 }
@@ -245,6 +250,45 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 			}
 			break;
 		case 2:
+		//	寻找下边界
+			rigbottom_cut = 159;
+			for(j = 19; j > -1; j--){
+				found_flag = 0, p = &binary_img[exti_rigp[0]][j];
+				for(i = exti_rigp[0]; i < bottom; i++, p+=col){
+					view_temp = *(p)^*(p+col);
+					for(k = 7; k > -1; k--){
+						if(!((found_flag>>k)&0x01))
+							if((view_temp>>k)&0x01){
+								bottombor[(j<<3)+7-k] = i;
+								if(rigbottom_cut > (j<<3)+7-k) rigbottom_cut =(j<<3)+7-k;
+							}
+					}
+					found_flag |= view_temp;
+					if(found_flag == 0xFF) break;
+					if(*(p+col) == 0x00) break;
+				}
+				if(found_flag != 0xFF) break;
+			}
+		//	寻找上边界
+			rigtop_cut = 159;
+			for(j = 19; j > -1; j--){
+				found_flag = 0, p = &binary_img[exti_rigp[0]][j];
+				for(i = exti_rigp[0]; i > top; i--, p-=col){
+					view_temp = *(p)^*(p-col);
+					for(k = 7; k > -1; k--){
+						if(!((found_flag>>k)&0x01))
+							if((view_temp>>k)&0x01){
+								topbor[(j<<3)+7-k] = i;
+								if(rigtop_cut > (j<<3)+7-k) rigtop_cut =(j<<3)+7-k;
+							}
+					}
+					found_flag |= view_temp;
+					if(found_flag == 0xFF) break;
+					if(*(p+col) == 0x00) break;
+				}
+				if(found_flag != 0xFF) break;
+			}
+			break;
 			break;
 	}
 }
@@ -286,6 +330,7 @@ void border_vertical_search(char num){
 		case 2:
 		//	变量初始化
 			rvet_trafcount = 0, exti_rigcount = 0;
+			rigtop_cut = 159, rigbottom_cut = 159;
 			if(rtraf_count > 1)
 				for(i = 1; i < rtraf_count; i++){
 				//	右外凸
@@ -296,8 +341,10 @@ void border_vertical_search(char num){
 							rvet_trafpoint_row[rvet_trafcount] = vet_rowmax, rvet_trafpoint_col[rvet_trafcount] = vet_colmax, rvet_trafcount++;
 						}
 				//	出口
-					if(rtraf_flag[i] == 1)
-						if(rtraf_flag[i-1] == 0) exti_rigp[exti_rigcount] = (rtraf_point_row[i]+rtraf_point_row[i-1])>>1, exti_rigcount++;	
+					if(rtraf_flag[i] == 1){
+						if(rtraf_flag[i-1] == 0) exti_rigp[exti_rigcount] = (rtraf_point_row[i]+rtraf_point_row[i-1])>>1, exti_rigcount++;
+						if(!vetflag){vetflag = 1;vert_search(2, rtraf_point_row[i]-7, rtraf_point_row[i-1]+7);}
+						}
 				}
 			break;
 	}
