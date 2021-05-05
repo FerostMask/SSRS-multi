@@ -16,6 +16,7 @@
 unsigned short img_color = 0xAE9C;
 unsigned char lef_riseflag;
 unsigned char act_flag;
+unsigned char show_point;
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/
@@ -87,11 +88,21 @@ void binary_disp(void){
 	}
 //	显示垂直边线
 //	for(i = 0; i < lefup_cut; i++) ips200_drawpoint(i, upbor[i], 0xA6AE);
-	for(i = 0; i < lefdown_cut; i++){
-		ips200_drawpoint(i, downbor[i], 0x00);
-		ips200_drawpoint(i, downbor[i]+1, 0x00);
-	}
-	ips200_showint16(0, 10, act_flag);
+	for(i = 0; i < lefbottom_cut; i++)
+		ips200_drawpoint(i, bottombor[i], 0x74ec);
+	for(i = 0; i < leftop_cut; i++)
+		ips200_drawpoint(i,topbor[i], 0x74ec);
+	
+//	ips200_drawpoint(0, show_point+1, RED);
+//	ips200_drawpoint(0, show_point+2, RED);
+//	ips200_drawpoint(0, show_point+1, RED);
+//	ips200_drawpoint(0, show_point+2, RED);
+	
+//	ips200_drawpoint(bottombor[8], 8, RED);
+//	ips200_drawpoint(bottombor[8]+1, 8, RED);
+//	ips200_drawpoint(bottombor[8], 9, RED);
+//	ips200_drawpoint(bottombor[8]+1, 9, RED);
+	ips200_showint16(160, 0, act_flag);
 //	ips200_showint16(0, 8, turn_flag);
 //	ips200_showint16(0, 9, out_vertical_flag[0]);
 }
@@ -103,11 +114,16 @@ void state_machine(void){
 	static unsigned char state, state_temp;
 //	状态检测
 	state_temp = state; state = 0;
-	if(turn_flag == 11) state = 1;//左转
-	if(turn_flag == 12) state = 2;//右转
+	if(turn_flag == 11) 
+		if(rtraf_count < 2)
+			state = 1;//左转
+	if(turn_flag == 12) 
+		if(ltraf_count < 2)
+			state = 2;//右转
 //	圆环检测
 	if(exti_lefcount > 0)//检测左环
 		if(exti_rigcount == 0)
+			if(rvet_trafcount == 0)
 				if(lvet_trafcount > 0){
 					if(lef_riseflag) state = 11;//左入环
 					if(state!=11)if(lvet_trafcount > 1) state = 12;//左过环
@@ -134,6 +150,21 @@ void state_machine(void){
 //		}
 //	状态机
 	if(state_temp!=state){//检测到状态跳变
+//	弯道丢边逻辑
+	//	弯道丢边
+		if(act_flag == 0)
+			if(state == 1)
+				act_flag = 6, img_color = 0x6DDD;
+		if(act_flag == 6)
+			if(state != 1)
+				act_flag = 0, img_color = 0xAE9C;
+		if(act_flag == 0)
+			if(state == 2)
+				act_flag = 7, img_color = 0x6DDD;
+		if(act_flag == 7)
+			if(state != 2)
+				act_flag = 0, img_color = 0xAE9C;
+//	圆环逻辑
 	//	直道进圆环过环（左环
 		if(act_flag == 0)
 			if(state == 12)
@@ -142,7 +173,7 @@ void state_machine(void){
 		if(act_flag == 1)
 			if(state == 11)
 				act_flag = 2, img_color = 0xFDEB;
-	//	进环后到出环（左环
+	//	进环后（左环
 		if(act_flag == 2)
 			if(state == 1)
 				act_flag = 3, img_color = 0xED2A;
@@ -163,21 +194,77 @@ void state_machine(void){
 /*------------------------------*/
 /*	    垂直边界点寻找模块		*/
 /*==============================*/
+void vert_search(char num, unsigned char top, unsigned char bottom){
+//	变量定义
+	register unsigned char i;
+	register char j, k;
+	unsigned char col = (MT9V03X_W-4)>>3;//换行
+	unsigned char *p;
+	unsigned char found_flag, view_temp;
+//	垂直边线寻找
+	show_point = bottom;
+	switch(num){
+		case 1:
+		//	寻找下边界
+			lefbottom_cut = 0;
+			for(j = 0; j < 19; j++){
+				found_flag = 0, p = &binary_img[exti_lefp[0]][j];
+				for(i = exti_lefp[0]; i < bottom; i++, p+=col){
+					view_temp = *(p)^*(p+col);
+					for(k = 7; k > -1; k--){
+						if(!((found_flag>>k)&0x01))
+							if((view_temp>>k)&0x01){
+								bottombor[(j<<3)+7-k] = i;
+								if(lefbottom_cut < (j<<3)+7-k) lefbottom_cut =(j<<3)+7-k;
+							}
+					}
+					found_flag |= view_temp;
+					if(found_flag == 0xFF) break;
+					if(*(p+col) == 0x00) break;
+				}
+				if(found_flag != 0xFF) break;
+			}
+		//	寻找上边界
+			leftop_cut = 0;
+			for(j = 0; j < 19; j++){
+				found_flag = 0, p = &binary_img[exti_lefp[0]][j];
+				for(i = exti_lefp[0]; i > top; i--, p-=col){
+					view_temp = *(p)^*(p-col);
+					for(k = 7; k > -1; k--){
+						if(!((found_flag>>k)&0x01))
+							if((view_temp>>k)&0x01){
+								topbor[(j<<3)+7-k] = i;
+								if(leftop_cut < (j<<3)+7-k) leftop_cut =(j<<3)+7-k;
+							}
+					}
+					found_flag |= view_temp;
+					if(found_flag == 0xFF) break;
+					if(*(p+col) == 0x00) break;
+				}
+				if(found_flag != 0xFF) break;
+			}
+			break;
+		case 2:
+			break;
+	}
+}
+/*------------------------------*/
+/*	    边界跳变点寻找模块		*/
+/*==============================*/
 void border_vertical_search(char num){
 //	变量定义
 	register unsigned char i, k, k2;
 	register char j;
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
 	unsigned char *p;
-	unsigned char vetflag;
+	unsigned char vetflag = 0;
 	unsigned char vet_colmax, vet_rowmax;
-	unsigned char found_flag, view_temp;
 //	垂直边界寻找
 	switch(num){
 		case 1:
 		//	变量初始化
 			lvet_trafcount = 0, exti_lefcount = 0, lef_riseflag = 0;
-			lefup_cut = 0, lefdown_cut = 0;
+			leftop_cut = 0, lefbottom_cut = 0;
 			if(ltraf_count > 1)
 				for(i = 1; i < ltraf_count; i++){
 				//	左外凸
@@ -190,8 +277,11 @@ void border_vertical_search(char num){
 						}
 				//	出口
 					if(ltraf_flag[i] == 1)
-						if(ltraf_flag[i-1] == 0) exti_lefp[exti_lefcount] = (ltraf_point_row[i]+ltraf_point_row[i-1])>>1, exti_lefcount++;
-				}	
+						if(ltraf_flag[i-1] == 0){ 
+							exti_lefp[exti_lefcount] = (ltraf_point_row[i]+ltraf_point_row[i-1])>>1, exti_lefcount++;
+							if(!vetflag){vetflag = 1;vert_search(1, ltraf_point_row[i]-7, ltraf_point_row[i-1]+7);}
+						}
+				}
 			break;
 		case 2:
 		//	变量初始化
@@ -607,8 +697,8 @@ void otsu(void){
 	rbor_search();
 //	判断是否为左右转（注意寻找顺序
 	if(turn_flag){
-		if(abs(found_point[0]-rcut)<5) turn_flag = 11;
-		if(abs(found_point[2]-lcut)<5) turn_flag = 12;
+		if(abs(found_point[0]-rcut)<4) turn_flag = 11;
+		if(abs(found_point[2]-lcut)<4) turn_flag = 12;
 	} 
 //	垂直边界检测
 	if(ltraf_count) border_vertical_search(1);

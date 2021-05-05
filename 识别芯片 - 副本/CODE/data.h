@@ -44,10 +44,10 @@ extern unsigned char ltraf_count, rtraf_count;
 //	转向判断
 extern unsigned char turn_flag;
 //	垂直边线寻找
-extern unsigned char upbor[MT9V03X_W-4], downbor[MT9V03X_W-4];
+extern unsigned char topbor[MT9V03X_W-4], bottombor[MT9V03X_W-4];//上下边线
 extern unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoint_col[5], rvet_trafpoint_col[5];
 extern unsigned char lvet_trafcount, rvet_trafcount;
-extern unsigned char lefup_cut, lefdown_cut, rigup_cut, rigdown_cut;//截止列
+extern unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//截止列
 extern unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;
 //
 /*----------------------*/
