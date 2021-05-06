@@ -17,6 +17,7 @@ unsigned short img_color = 0xAE9C;
 unsigned char lef_riseflag;
 unsigned char act_flag;
 unsigned char show_point;
+short show_value[5];
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/
@@ -39,10 +40,6 @@ void binary_disp(void){
 			}
 		}
 	}
-//	显示基点
-//	ips200_showint16(0, 8, fop_flag);
-//	ips200_drawpoint(lefbor[found_point[0]], found_point[0], 0XFDF8);
-//	ips200_drawpoint(rigbor[found_point[2]], found_point[2], 0XFDF8);
 //	显示边界
 	for(i = MT9V03X_H - 1; i > lcut; i--) ips200_drawpoint(lefbor[i], i, 0x00);
 	for(i = MT9V03X_H - 1; i > rcut; i--) ips200_drawpoint(rigbor[i], i, 0x00);
@@ -97,108 +94,171 @@ void binary_disp(void){
 	for(i = 159; i > rigtop_cut; i--)
 		ips200_drawpoint(i, topbor[i], 0x74ec);
 
-	ips200_showint16(160, 0, act_flag);	
-//	ips200_drawpoint(0, show_point+1, RED);
-//	ips200_drawpoint(0, show_point+2, RED);
-//	ips200_drawpoint(0, show_point+1, RED);
-//	ips200_drawpoint(0, show_point+2, RED);
+	ips200_showint16(160, 0, act_flag);
+	ips200_showint16(170, 1, show_value[0]);
+	ips200_showint16(170, 2, show_value[1]);
+//	ips200_showint16(170, 3, show_value[2]);
+//	ips200_showint16(170, 4, show_value[3]);
+//	ips200_showint16(170, 5, show_value[4]);
 	
-//	ips200_drawpoint(bottombor[8], 8, RED);
-//	ips200_drawpoint(bottombor[8]+1, 8, RED);
-//	ips200_drawpoint(bottombor[8], 9, RED);
-//	ips200_drawpoint(bottombor[8]+1, 9, RED);
+//	ips200_showfloat(170, 1, show_value[0], 2, 2);
+//	ips200_showfloat(170, 2, show_value[1], 2, 2);
+//	ips200_showfloat(170, 3, show_value[2], 2, 2);
+//	ips200_showfloat(170, 4, show_value[3], 2, 2);
+//	ips200_showfloat(170, 5, show_value[4], 2, 2);
+	
+//	ips200_drawpoint(0, show_point+1, RED);
+//	ips200_drawpoint(0, show_point+2, RED);
+//	ips200_drawpoint(0, show_point+1, RED);
+//	ips200_drawpoint(0, show_point+2, RED);
 
 //	ips200_showint16(0, 8, turn_flag);
 //	ips200_showint16(0, 9, out_vertical_flag[0]);
 }
 /*------------------------------*/
-/*	    	状态机模块			*/
+/*	   垂直边线斜率分析模块		*/
 /*==============================*/
-void state_machine(void){
+static char vert_slope_cal(char num){//点太少不要执行这个函数
 //	变量定义
-	static unsigned char state, state_temp;
-//	状态检测
-	state_temp = state; state = 0;
-	if(turn_flag == 11) 
-		if(rtraf_count < 2)
-			state = 1;//左转
-	if(turn_flag == 12) 
-		if(ltraf_count < 2)
-			state = 2;//右转
-//	圆环检测
-	if(exti_lefcount > 0)//检测左环
-		if(exti_rigcount == 0)
-			if(rvet_trafcount == 0)
-				if(lvet_trafcount > 0){
-					if(lef_riseflag) state = 11;//左入环
-					if(state!=11)if(lvet_trafcount > 1) state = 12;//左过环
-	}
-//	左出环检测
-	if(act_flag == 3)
-		if(exti_rigcount > 0)
-			state = 13;
-	if(act_flag == 4)
-		if(lvet_trafcount > 0)
-			state = 14;
-	if(act_flag == 5){
-//		if(turn_flag == 11|| turn_flag == 12) state = 15;
-		if(turn_flag != 1)
-			if(turn_flag != 3)
-				if(ltraf_count == 0)
-					if(rtraf_count == 0)
-						state = 15;
-	}
-//	十字检测（粗略
-//	if(exti_lefcount > 0)
-//		if(exti_rigcount >0){
-//			if(abs(exti_lefp[0] - exti_rigp[0]) < 5) img_color = 0xED2A, state = 20;//十字
-//		}
-//	状态机
-	if(state_temp!=state){//检测到状态跳变
-//	弯道丢边逻辑
-	//	弯道丢边
-		if(act_flag == 0)
-			if(state == 1)
-				act_flag = 6, img_color = 0x6DDD;
-		if(act_flag == 6)
-			if(state != 1)
-				act_flag = 0, img_color = 0xAE9C;
-		if(act_flag == 0)
-			if(state == 2)
-				act_flag = 7, img_color = 0x6DDD;
-		if(act_flag == 7)
-			if(state != 2)
-				act_flag = 0, img_color = 0xAE9C;
-//	圆环逻辑
-	//	直道进圆环过环（左环
-		if(act_flag == 0)
-			if(state == 12)
-				act_flag = 1, img_color = 0xBDB8;
-	//	过环到圆环进环（左环
-		if(act_flag == 1)
-			if(state == 11)
-				act_flag = 2, img_color = 0xFDEB;
-	//	进环后（左环
-		if(act_flag == 2)
-			if(state == 1)
-				act_flag = 3, img_color = 0xED2A;
-	//	环内到出环（左环
-		if(act_flag == 3)
-			if(state == 13)
-				act_flag = 4, img_color = 0x31A7;
-	//	出环后离开环道（左环
-		if(act_flag == 4)
-			if(state == 14)
-				act_flag = 5, img_color = 0x64D0;
-	//	由环道进入其他赛道
-		if(act_flag == 5)
-			if(state == 0)
-				act_flag = 0, img_color = 0xAE9C;
+	register char i;
+	unsigned char mp[4];
+	float slope[3];
+	short angle[2];
+//	计算斜率
+	switch(num){
+	//	左上
+		case 0:
+			mp[0] = 0;
+			mp[2] = leftop_cut>>1;
+			mp[1] = mp[2]>>1, mp[3] = (mp[2]+leftop_cut)>>1;
+		//	计算斜率
+			for(i = 0; i < 3; i++)
+				slope[i] = (float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]);
+		//	计算角度变化
+			for(i = 0; i < 2; i++)
+				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+//			show_value[0] = angle[0]+angle[1];
+			break;
+	//	左下
+		case 1:
+			mp[0] = 0;
+			mp[2] = lefbottom_cut>>1;
+			mp[1] = mp[2]>>1, mp[3] = (mp[2]+lefbottom_cut)>>1;
+			for(i = 0; i < 3; i++)
+				slope[i] = (float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]);
+			for(i = 0; i < 2; i++)
+				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+//			show_value[1] = angle[0]+angle[1];
+			break;
+	//	右上
+		case 2:
+			mp[0] = 159;
+			mp[2] = (rigtop_cut+mp[0])>>1;
+			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+rigtop_cut)>>1;
+			for(i = 0; i < 3; i++)
+				slope[i] = (float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]);
+			for(i = 0; i < 2; i++)
+				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+			show_value[0] = angle[0]+angle[1];
+			break;
+	//	右下
+		case 3:
+			mp[0] = 159;
+			mp[2] = (rigbottom_cut+mp[0])>>1;
+			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+rigbottom_cut)>>1;
+			for(i = 0; i < 3; i++)
+				slope[i] = (float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]);
+			for(i = 0; i < 2; i++)
+				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+			show_value[1] = angle[0]+angle[1];
+			break;
 	}
 }
 /*------------------------------*/
-/*	   垂直边线斜率分析模块		*/
+/*	    	状态机模块			*/
 /*==============================*/
+//void state_machine(void){
+////	变量定义
+//	static unsigned char state, state_temp;
+////	状态检测
+//	state_temp = state; state = 0;
+//	if(turn_flag == 11) 
+//		if(rtraf_count < 2)
+//			state = 1;//左转
+//	if(turn_flag == 12) 
+//		if(ltraf_count < 2)
+//			state = 2;//右转
+////	圆环检测
+//	if(exti_lefcount > 0)//检测左环
+//		if(exti_rigcount == 0)
+//			if(rvet_trafcount == 0)
+//				if(lvet_trafcount > 0){
+//					if(lef_riseflag) state = 11;//左入环
+//					if(state!=11)if(lvet_trafcount > 1) state = 12;//左过环
+//	}
+////	左出环检测
+//	if(act_flag == 3)
+//		if(exti_rigcount > 0)
+//			state = 13;
+//	if(act_flag == 4)
+//		if(lvet_trafcount > 0)
+//			state = 14;
+//	if(act_flag == 5){
+////		if(turn_flag == 11|| turn_flag == 12) state = 15;
+//		if(turn_flag != 1)
+//			if(turn_flag != 3)
+//				if(ltraf_count == 0)
+//					if(rtraf_count == 0)
+//						state = 15;
+//	}
+////	十字检测（粗略
+////	if(exti_lefcount > 0)
+////		if(exti_rigcount >0){
+////			if(abs(exti_lefp[0] - exti_rigp[0]) < 5) img_color = 0xED2A, state = 20;//十字
+////		}
+////	状态机
+//	if(state_temp!=state){//检测到状态跳变
+////	弯道丢边逻辑
+//	//	弯道丢边
+//		if(act_flag == 0)
+//			if(state == 1)
+//				act_flag = 6, img_color = 0x6DDD;
+//		if(act_flag == 6)
+//			if(state != 1)
+//				act_flag = 0, img_color = 0xAE9C;
+//		if(act_flag == 0)
+//			if(state == 2)
+//				act_flag = 7, img_color = 0x6DDD;
+//		if(act_flag == 7)
+//			if(state != 2)
+//				act_flag = 0, img_color = 0xAE9C;
+////	圆环逻辑
+//	//	直道进圆环过环（左环
+//		if(act_flag == 0)
+//			if(state == 12)
+//				act_flag = 1, img_color = 0xBDB8;
+//	//	过环到圆环进环（左环
+//		if(act_flag == 1)
+//			if(state == 11)
+//				act_flag = 2, img_color = 0xFDEB;
+//	//	进环后（左环
+//		if(act_flag == 2)
+//			if(state == 1)
+//				act_flag = 3, img_color = 0xED2A;
+//	//	环内到出环（左环
+//		if(act_flag == 3)
+//			if(state == 13)
+//				act_flag = 4, img_color = 0x31A7;
+//	//	出环后离开环道（左环
+//		if(act_flag == 4)
+//			if(state == 14)
+//				act_flag = 5, img_color = 0x64D0;
+//	//	由环道进入其他赛道
+//		if(act_flag == 5)
+//			if(state == 0)
+//				act_flag = 0, img_color = 0xAE9C;
+//	}
+//}
 /*------------------------------*/
 /*	    垂直边界点寻找模块		*/
 /*==============================*/
@@ -232,6 +292,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
+//			if(lefbottom_cut > 8) vert_slope_cal(1);
 		//	寻找上边界
 			leftop_cut = 0;
 			for(j = 0; j < 19; j++){
@@ -251,6 +312,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
+//			if(leftop_cut > 8) vert_slope_cal(0);
 			break;
 		case 2:
 		//	寻找下边界
@@ -272,6 +334,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
+			if(rigbottom_cut > 8) vert_slope_cal(3);
 		//	寻找上边界
 			rigtop_cut = 159;
 			for(j = 19; j > -1; j--){
@@ -291,7 +354,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
-			break;
+			if(rigtop_cut > 8) vert_slope_cal(2);
 			break;
 	}
 }
@@ -326,7 +389,10 @@ void border_vertical_search(char num){
 					if(ltraf_flag[i] == 1)
 						if(ltraf_flag[i-1] == 0){ 
 							exti_lefp[exti_lefcount] = (ltraf_point_row[i]+ltraf_point_row[i-1])>>1, exti_lefcount++;
-							if(!vetflag){vetflag = 1;vert_search(1, ltraf_point_row[i]-7, ltraf_point_row[i-1]+7);}
+							if(!vetflag){
+								if(i+1 < ltraf_count) {vetflag = 1;vert_search(1, ltraf_point_row[i+1], ltraf_point_row[i-1]+7);}
+								else {vetflag = 1;vert_search(1, ltraf_point_row[i]-3, ltraf_point_row[i-1]+7);}
+							}
 						}
 				}
 			break;
@@ -346,7 +412,10 @@ void border_vertical_search(char num){
 				//	出口
 					if(rtraf_flag[i] == 1){
 						if(rtraf_flag[i-1] == 0) exti_rigp[exti_rigcount] = (rtraf_point_row[i]+rtraf_point_row[i-1])>>1, exti_rigcount++;
-						if(!vetflag){vetflag = 1;vert_search(2, rtraf_point_row[i]-7, rtraf_point_row[i-1]+7);}
+						if(!vetflag){
+							if(i+1 < rtraf_count){vetflag = 1;vert_search(2, rtraf_point_row[i+1], rtraf_point_row[i-1]+7);}
+							else {vetflag = 1;vert_search(2, rtraf_point_row[i]-3, rtraf_point_row[i-1]+7);}
+						}
 						}
 				}
 			break;
@@ -766,7 +835,7 @@ void otsu(void){
 	if(ltraf_count) border_vertical_search(1);
 	if(rtraf_count) border_vertical_search(2);
 //	状态机
-	state_machine();
+//	state_machine();
 //	图像显示
 	if(csimenu_flag[0]) binary_disp();
 	if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
