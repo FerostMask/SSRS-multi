@@ -197,6 +197,9 @@ void state_machine(void){
 	}
 }
 /*------------------------------*/
+/*	   ´¹Ö±±ßÏßÐ±ÂÊ·ÖÎöÄ£¿é		*/
+/*==============================*/
+/*------------------------------*/
 /*	    ´¹Ö±±ß½çµãÑ°ÕÒÄ£¿é		*/
 /*==============================*/
 void vert_search(char num, unsigned char top, unsigned char bottom){
@@ -411,7 +414,13 @@ void lbor_search(void){
 				if(*(uint16*)p == 0x0000) continue;
 				else break;
 			}
-			if(j == 19){lcut = i;return;}//µÖ´ï±ß½ç£¬Í£Ö¹ËÑË÷
+			if(j == 19){//µÖ´ï±ß½ç£¬Í£Ö¹ËÑË÷
+				lcut = i;
+				if(traf_flag_temp)
+					if(ltraf_point_row[ltraf_count-1]-i>5 || ltraf_count == 0)
+						ltraf_flag[ltraf_count] = 1, ltraf_point_row[ltraf_count] = i+1, ltraf_point_col[ltraf_count] = lefbor[i+1], ltraf_count++;
+				return;
+			}
 			if(*(uint16*)p == 0xFF00){lefbor[i] = (j<<3)+7;continue;}//×óºÚÓÒ°×Ìø±ä
 			if(*(uint16*)p == 0x00FF){lefbor[i] = (j+1)<<3;continue;}//×ó°×ÓÒºÚÌø±ä
 			if(*(p+1) != 0x00)
@@ -516,7 +525,13 @@ void rbor_search(void){
 				if(*(uint16*)p == 0x0000) continue;
 				else break;
 			}
-			if(j == -1){rcut = i;return;}//µÖ´ï±ß½ç£¬Í£Ö¹ËÑË÷
+			if(j == -1){//µÖ´ï±ß½ç£¬Í£Ö¹ËÑË÷
+				rcut = i;
+				if(traf_flag_temp)//×ª±äµã¼ì²â
+					if(rtraf_point_row[rtraf_count-1]-i>5 || rtraf_count == 0)//ÏÞÖÆ×ª±äµã¸ß¶È
+						rtraf_point_row[rtraf_count] = i+1, rtraf_point_col[rtraf_count] = rigbor[i+1], rtraf_count++;
+				return;
+			}
 			if(*(uint16*)p == 0x00FF){rigbor[i] = ((j+1)<<3);continue;}//×ó°×ÓÒºÚÌø±ä
 			if(*(uint16*)p == 0xFF00){rigbor[i] = (j<<3)+7;continue;}//×óºÚÓÒ°×Ìø±ä
 			if(*p != 0x00)
