@@ -89,6 +89,9 @@ void TIM3_IRQHandler (void)
 {
 	uint32 state = TIM3->SR;														// ¶ÁÈ¡ÖĞ¶Ï×´Ì¬
 	TIM3->SR &= ~state;																// Çå¿ÕÖĞ¶Ï×´Ì¬
+//	´úÂë±àĞ´ÇøÓò
+	if(act_flag_temp == act_flag) act_flag = 0, img_color = 0xAE9C;
+	tim_interrupt_disabnle(TIM_3);
 }
 //	±àÂëÆ÷
 void TIM4_IRQHandler (void)

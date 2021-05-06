@@ -30,5 +30,8 @@
 .\objects\cam.o: ..\..\Libraries\seekfree_libraries\zf_uart.h
 .\objects\cam.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\cam.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_uart.h
+.\objects\cam.o: ..\..\Libraries\seekfree_libraries\zf_tim.h
+.\objects\cam.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_tim.h
+.\objects\cam.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_misc.h
 .\objects\cam.o: ..\..\Libraries\seekfree_peripheral\SEEKFREE_IPS200_PARALLEL8.h
 .\objects\cam.o: ..\..\Libraries\seekfree_peripheral\SEEKFREE_FONT.h

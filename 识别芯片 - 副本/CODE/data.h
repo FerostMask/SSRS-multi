@@ -49,6 +49,9 @@ extern unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoin
 extern unsigned char lvet_trafcount, rvet_trafcount;
 extern unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//截止列
 extern unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;
+//	状态机
+extern unsigned char act_flag, act_flag_temp;
+extern unsigned short img_color;
 //
 /*----------------------*/
 /*	 	 电磁模块		*/
