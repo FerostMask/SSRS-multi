@@ -18,6 +18,7 @@ unsigned char show_point;
 short show_value[5];
 unsigned char ac_flag[4];
 short angle_change[4];
+short ave_slope[4];
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/
@@ -95,10 +96,10 @@ void binary_disp(void){
 		ips200_drawpoint(i, topbor[i], 0x74ec);
 
 	ips200_showint16(160, 0, act_flag);
-//	ips200_showint16(170, 1, show_value[0]);
-//	ips200_showint16(170, 2, show_value[1]);
-//	ips200_showint16(170, 3, show_value[2]);
-//	ips200_showint16(170, 4, show_value[3]);
+	ips200_showint16(170, 1, show_value[0]);
+	ips200_showint16(170, 2, show_value[1]);
+	ips200_showint16(170, 3, show_value[2]);
+	ips200_showint16(170, 4, show_value[3]);
 //	ips200_showint16(170, 5, show_value[4]);
 	
 //	ips200_showfloat(170, 1, show_value[0], 2, 2);
@@ -122,7 +123,7 @@ static char slope_cal(char num){
 //	变量定义
 	register char i;
 	unsigned char mp[5];
-	float slope[4];
+	short slope[4];
 	short angle[3];
 //	计算斜率
 	switch(num){
@@ -133,9 +134,9 @@ static char slope_cal(char num){
 			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
 		//	计算斜率
 			for(i = 0; i < 4; i++)
-				slope[i] = (float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]);
+				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
 			for(i = 0; i < 3; i++)
-				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+				angle[i] = slope[i+1] - slope[i];
 			if(angle[0]+angle[1]+angle[2] < -150) return 1;
 			else return 0;
 //			show_value[0] = angle[0]+angle[1]+angle[2];
@@ -147,9 +148,9 @@ static char slope_cal(char num){
 			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
 		//	计算斜率
 			for(i = 0; i < 4; i++)
-				slope[i] = (float)(lefbor[mp[i+1]]-lefbor[mp[i]])/(float)(mp[i+1]-mp[i]);
+				slope[i] = atan((float)(lefbor[mp[i+1]]-lefbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
 			for(i = 0; i < 3; i++)
-				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+				angle[i] = slope[i+1] - slope[i];
 			if(angle[0]+angle[1]+angle[2] > 150) return 1;
 			else return 0;
 //			show_value[1] = angle[0]+angle[1]+angle[2];
@@ -163,7 +164,7 @@ static void vert_slope_cal(char num){//点太少不要执行这个函数
 //	变量定义
 	register char i;
 	unsigned char mp[4];
-	float slope[3];
+	short slope[3];
 	short angle[2];
 //	计算斜率
 	switch(num){
@@ -174,12 +175,14 @@ static void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[1] = mp[2]>>1, mp[3] = (mp[2]+leftop_cut)>>1;
 		//	计算斜率
 			for(i = 0; i < 3; i++)
-				slope[i] = (float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]);
+				slope[i] = atan((float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
 		//	计算角度变化
 			for(i = 0; i < 2; i++)
-				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+				angle[i] = slope[i+1] - slope[i];
 			angle_change[0] = angle[0]+angle[1], ac_flag[0] = 1;
+			ave_slope[0] = (angle[0]+angle[1])>>1;
 //			show_value[0] = angle_change[0];
+			show_value[0] = ave_slope[0];
 			break;
 	//	左下
 		case 1:
@@ -187,11 +190,13 @@ static void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[2] = lefbottom_cut>>1;
 			mp[1] = mp[2]>>1, mp[3] = (mp[2]+lefbottom_cut)>>1;
 			for(i = 0; i < 3; i++)
-				slope[i] = (float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]);
+				slope[i] = atan((float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
 			for(i = 0; i < 2; i++)
-				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+				angle[i] = slope[i+1] - slope[i];
 			angle_change[1] = angle[0]+angle[1], ac_flag[1] = 1;
+			ave_slope[1] = (angle[0]+angle[1])>>1;
 //			show_value[1] = angle_change[1];
+			show_value[1] = ave_slope[1];
 			break;
 	//	右上
 		case 2:
@@ -199,11 +204,13 @@ static void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[2] = (rigtop_cut+mp[0])>>1;
 			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+rigtop_cut)>>1;
 			for(i = 0; i < 3; i++)
-				slope[i] = (float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]);
+				slope[i] = atan((float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
 			for(i = 0; i < 2; i++)
-				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+				angle[i] = slope[i+1] - slope[i];
 			angle_change[2] = angle[0]+angle[1], ac_flag[2] = 1;
+			ave_slope[2] = (angle[0]+angle[1])>>1;
 //			show_value[2] = angle_change[2];
+			show_value[2] = ave_slope[2];
 			break;
 	//	右下
 		case 3:
@@ -211,11 +218,13 @@ static void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[2] = (rigbottom_cut+mp[0])>>1;
 			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+rigbottom_cut)>>1;
 			for(i = 0; i < 3; i++)
-				slope[i] = (float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]);
+				slope[i] = atan((float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
 			for(i = 0; i < 2; i++)
-				angle[i] = atan(slope[i+1])*573 - atan(slope[i])*573;
+				angle[i] = slope[i+1] - slope[i];
 			angle_change[3] = angle[0]+angle[1], ac_flag[3] = 1;
+			ave_slope[3] = (angle[0]+angle[1])>>1;
 //			show_value[3] = angle_change[3];
+			show_value[3] = ave_slope[3];
 			break;
 	}
 }
@@ -241,47 +250,78 @@ void state_machine(void){
 //	show_value[0] = abs(topbor[leftop_cut-1] - bottombor[lefbottom_cut-1]);
 	if(exti_lefcount > 0)//环道前检测
 		if(exti_rigcount == 0)
-			if(rtraf_count < 2){
-			//	进环模式1 | 检测到环道出环
-				if(ac_flag[0])
-					if(angle_change[0] < -30)
-						if(ac_flag[1])
-							if(angle_change[1] < 70)
-								state = 11;
-			//	进环模式2 | 检测到环道入环
-				if(ac_flag[1])
-					if(angle_change[1] > 140)
-						if(ac_flag[0])
-							if(angle_change[0] > 0){
-								row_high = abs(topbor[leftop_cut-1] - bottombor[lefbottom_cut-1]);
-								if(row_high > 13)
-									if(row_high < 26)
-										state = 12;
-							}
-			}
+			if(!slope_cal(1))
+				if(rtraf_count < 2){
+				//	进环模式1 | 检测到环道出环
+					if(ac_flag[0])
+						if(angle_change[0] < -30)
+							if(ac_flag[1])
+								if(angle_change[1] < 70)
+									state = 11;
+				//	进环模式2 | 检测到环道入环
+					if(ac_flag[1])
+						if(angle_change[1] > 140)
+							if(ac_flag[0])
+								if(angle_change[0] > 0){
+									row_high = abs(topbor[leftop_cut-1] - bottombor[lefbottom_cut-1]);
+									if(row_high > 13)
+										if(row_high < 26)
+											state = 12;
+								}
+				}
+//	环内检测
 	if(act_flag == 13)
 		if(exti_rigcount > 0)//出环
 			state = 14;
 	if(act_flag == 14)
 		if(lvet_trafcount > 0)
 			state = 15;
+//	十字检测
+	if(exti_lefcount > 0)
+		if(exti_rigcount > 0){
+		//	右边为平行直线
+			if(ac_flag[2])
+				if(ac_flag[3])
+					if(abs(ave_slope[2]-ave_slope[3]) < 40){//上下边线倾角差小于4°
+						if(ac_flag[0])
+							if(abs(ave_slope[0]-ave_slope[2]) < 40)
+								state = 21;
+						if(state != 21)
+							if(ac_flag[1])
+								if(abs(ave_slope[1]-ave_slope[3]) < 40)
+									state = 21;	
+					}
+		//	左边为平行直线
+			if(state != 21)
+				if(ac_flag[0])
+					if(ac_flag[1])
+						if(abs(ave_slope[0]-ave_slope[1]) < 40){
+							if(ac_flag[2])
+								if(abs(ave_slope[0]-ave_slope[2]) < 40)
+									state = 21;
+							if(state != 21)
+								if(ac_flag[3])
+									if(abs(ave_slope[1]-ave_slope[3]) < 40)
+										state = 21;
+						}
+		}
 //	状态机
 	if(state_temp!=state){//检测到状态跳变
 	//	弯道丢边
-		if(act_flag == 0)
+		if(!act_flag)
 			if(state == 1)
 				act_flag = 1, img_color = 0x6DDD;
 		if(act_flag == 1)
 			if(state != 1)
 				act_flag = 0, img_color = 0xAE9C;
-		if(act_flag == 0)
+		if(!act_flag)
 			if(state == 2)
 				act_flag = 2, img_color = 0x6DDD;
 		if(act_flag == 2)
 			if(state != 2)
 				act_flag = 0, img_color = 0xAE9C;
 	//	环道
-		if(act_flag == 0)//进环模式1 | 脆弱状态
+		if(!act_flag)//进环模式1 | 易碎状态
 			if(state == 11){
 				act_flag = 11, act_flag_temp = act_flag, img_color = 0x8CF6;
 				fragile_flag = 1;
@@ -301,6 +341,13 @@ void state_machine(void){
 		if(act_flag == 14)
 			if(state == 15)
 				act_flag = 0, img_color = 0xAE9C;
+	//	十字
+		if((!act_flag) || fragile_flag){
+			if(fragile_flag)
+				if(act_flag != act_flag_temp){fragile_flag = 0;return;}//检查易碎状态是否可以打破
+			if(state == 21)
+				act_flag = 21, img_color = 0xCF7E;
+		}
 	}
 }
 /*------------------------------*/
@@ -336,7 +383,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
-			if(lefbottom_cut > 8) vert_slope_cal(1);
+			if(lefbottom_cut > 5) vert_slope_cal(1);
 		//	寻找上边界
 			leftop_cut = 0;
 			for(j = 0; j < 19; j++){
@@ -356,7 +403,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
-			if(leftop_cut > 8) vert_slope_cal(0);
+			if(leftop_cut > 5) vert_slope_cal(0);
 			break;
 		case 2:
 		//	寻找下边界
@@ -378,7 +425,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
-			if(rigbottom_cut > 8) vert_slope_cal(3);
+			if(rigbottom_cut > 5) vert_slope_cal(3);
 		//	寻找上边界
 			rigtop_cut = 159;
 			for(j = 19; j > -1; j--){
@@ -398,7 +445,7 @@ void vert_search(char num, unsigned char top, unsigned char bottom){
 				}
 				if(found_flag != 0xFF) break;
 			}
-			if(rigtop_cut > 8) vert_slope_cal(2);
+			if(rigtop_cut > 5) vert_slope_cal(2);
 			break;
 	}
 }
