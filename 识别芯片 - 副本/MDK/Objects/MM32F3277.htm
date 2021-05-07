@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F3277.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F3277.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri May 07 14:22:51 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri May 07 23:28:06 2021
 <BR><P>
 <H3>Maximum Stack Usage =       1136 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1025,7 +1025,7 @@ Global Symbols
 <LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;slope_cal
 </UL>
 
-<P><STRONG><a name="[96]"></a>binary_disp</STRONG> (Thumb, 892 bytes, Stack size 24 bytes, cam.o(i.binary_disp))
+<P><STRONG><a name="[96]"></a>binary_disp</STRONG> (Thumb, 876 bytes, Stack size 24 bytes, cam.o(i.binary_disp))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = binary_disp &rArr; ips200_showint16 &rArr; ips200_showchar &rArr; ips200_address_set &rArr; ips200_wr_data16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_wr_data16
@@ -1044,7 +1044,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[9c]"></a>border_vertical_search</STRONG> (Thumb, 516 bytes, Stack size 32 bytes, cam.o(i.border_vertical_search))
+<P><STRONG><a name="[9c]"></a>border_vertical_search</STRONG> (Thumb, 596 bytes, Stack size 32 bytes, cam.o(i.border_vertical_search))
 <BR><BR>[Stack]<UL><LI>Max Depth = 304<LI>Call Chain = border_vertical_search &rArr; vert_search &rArr; vert_slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vert_search
@@ -1338,7 +1338,7 @@ Global Symbols
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_init
 </UL>
 
-<P><STRONG><a name="[e7]"></a>lbor_search</STRONG> (Thumb, 1334 bytes, Stack size 24 bytes, cam.o(i.lbor_search))
+<P><STRONG><a name="[e7]"></a>lbor_search</STRONG> (Thumb, 1338 bytes, Stack size 24 bytes, cam.o(i.lbor_search))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = lbor_search
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;otsu
@@ -1596,8 +1596,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_IRQHandler
 </UL>
 
-<P><STRONG><a name="[e9]"></a>state_machine</STRONG> (Thumb, 948 bytes, Stack size 8 bytes, cam.o(i.state_machine))
-<BR><BR>[Stack]<UL><LI>Max Depth = 232<LI>Call Chain = state_machine &rArr; slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[e9]"></a>state_machine</STRONG> (Thumb, 1680 bytes, Stack size 32 bytes, cam.o(i.state_machine))
+<BR><BR>[Stack]<UL><LI>Max Depth = 264<LI>Call Chain = state_machine &rArr; slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;slope_cal
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tim_interrupt_init_ms
@@ -1801,8 +1801,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fop_search
 </UL>
 
-<P><STRONG><a name="[ea]"></a>slope_cal</STRONG> (Thumb, 488 bytes, Stack size 72 bytes, cam.o(i.slope_cal))
-<BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[ea]"></a>slope_cal</STRONG> (Thumb, 758 bytes, Stack size 80 bytes, cam.o(i.slope_cal))
+<BR><BR>[Stack]<UL><LI>Max Depth = 232<LI>Call Chain = slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2iz
@@ -1814,7 +1814,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;state_machine
 </UL>
 
-<P><STRONG><a name="[ed]"></a>vert_slope_cal</STRONG> (Thumb, 952 bytes, Stack size 72 bytes, cam.o(i.vert_slope_cal))
+<P><STRONG><a name="[ed]"></a>vert_slope_cal</STRONG> (Thumb, 920 bytes, Stack size 72 bytes, cam.o(i.vert_slope_cal))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = vert_slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
