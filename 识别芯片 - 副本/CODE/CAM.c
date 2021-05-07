@@ -95,9 +95,9 @@ void binary_disp(void){
 		ips200_drawpoint(i, topbor[i], 0x74ec);
 
 	ips200_showint16(160, 0, act_flag);
-	ips200_showint16(170, 1, show_value[0]);
-	ips200_showint16(170, 2, show_value[1]);
-	ips200_showint16(170, 3, show_value[2]);
+//	ips200_showint16(170, 1, show_value[0]);
+//	ips200_showint16(170, 2, show_value[1]);
+//	ips200_showint16(170, 3, show_value[2]);
 //	ips200_showint16(170, 4, show_value[3]);
 //	ips200_showint16(170, 5, show_value[4]);
 	
@@ -254,11 +254,17 @@ void state_machine(void){
 						if(ac_flag[0])
 							if(angle_change[0] > 0){
 								row_high = abs(topbor[leftop_cut-1] - bottombor[lefbottom_cut-1]);
-								if(row_high > 14)
-									if(row_high < 24)
+								if(row_high > 13)
+									if(row_high < 26)
 										state = 12;
 							}
 			}
+	if(act_flag == 13)
+		if(exti_rigcount > 0)//出环
+			state = 14;
+	if(act_flag == 14)
+		if(lvet_trafcount > 0)
+			state = 15;
 //	状态机
 	if(state_temp!=state){//检测到状态跳变
 	//	弯道丢边
@@ -278,102 +284,25 @@ void state_machine(void){
 		if(act_flag == 0)//进环模式1 | 脆弱状态
 			if(state == 11){
 				act_flag = 11, act_flag_temp = act_flag, img_color = 0x8CF6;
-				tim_interrupt_init_ms(TIM_3, 2000, 0, 0);
+				fragile_flag = 1;
+				tim_interrupt_init_ms(TIM_3, 2000, 0, 0);//状态计时
 			}
-		if(act_flag == 0 || act_flag == 1)
+		if(act_flag == 0 || act_flag == 1)//进环模式2
 			if(state == 12)
 				act_flag = 12, img_color = 0x46D0;
+		if(act_flag == 12)
+			if(state == 1)//环内
+				act_flag = 13, img_color = 0xB6DB;
+		if(act_flag == 13)
+			if(state == 14){//出环 | 脆弱状态
+				act_flag = 14, act_flag_temp = act_flag, img_color = 0xBDB8;
+				tim_interrupt_init_ms(TIM_3, 2000, 0, 0);
+			}
+		if(act_flag == 14)
+			if(state == 15)
+				act_flag = 0, img_color = 0xAE9C;
 	}
 }
-/*------------------------------*/
-/*	    	状态机模块			*/
-/*==============================*/
-//void state_machine(void){
-////	变量定义
-//	static unsigned char state, state_temp;
-////	状态检测
-//	state_temp = state; state = 0;
-//	if(turn_flag == 11) 
-//		if(rtraf_count < 2){
-//			state = 1;//左转
-//			slope_cal(1);
-//		}
-//	if(turn_flag == 12) 
-//		if(ltraf_count < 2){
-//			state = 2;//右转
-//			slope_cal(2);
-//	}
-////	圆环检测
-//	if(exti_lefcount > 0)//检测左环
-//		if(exti_rigcount == 0)
-//			if(rvet_trafcount == 0)
-//				if(lvet_trafcount > 0){
-//					if(lef_riseflag) state = 11;//左入环
-//					if(state!=11)if(lvet_trafcount > 1) state = 12;//左过环
-//	}
-////	左出环检测
-//	if(act_flag == 3)
-//		if(exti_rigcount > 0)
-//			state = 13;
-//	if(act_flag == 4)
-//		if(lvet_trafcount > 0)
-//			state = 14;
-//	if(act_flag == 5){
-////		if(turn_flag == 11|| turn_flag == 12) state = 15;
-//		if(turn_flag != 1)
-//			if(turn_flag != 3)
-//				if(ltraf_count == 0)
-//					if(rtraf_count == 0)
-//						state = 15;
-//	}
-////	十字检测（粗略
-////	if(exti_lefcount > 0)
-////		if(exti_rigcount >0){
-////			if(abs(exti_lefp[0] - exti_rigp[0]) < 5) img_color = 0xED2A, state = 20;//十字
-////		}
-////	状态机
-//	if(state_temp!=state){//检测到状态跳变
-////	弯道丢边逻辑
-//	//	弯道丢边
-//		if(act_flag == 0)
-//			if(state == 1)
-//				act_flag = 6, img_color = 0x6DDD;
-//		if(act_flag == 6)
-//			if(state != 1)
-//				act_flag = 0, img_color = 0xAE9C;
-//		if(act_flag == 0)
-//			if(state == 2)
-//				act_flag = 7, img_color = 0x6DDD;
-//		if(act_flag == 7)
-//			if(state != 2)
-//				act_flag = 0, img_color = 0xAE9C;
-////	圆环逻辑
-//	//	直道进圆环过环（左环
-//		if(act_flag == 0)
-//			if(state == 12)
-//				act_flag = 1, img_color = 0xBDB8;
-//	//	过环到圆环进环（左环
-//		if(act_flag == 1)
-//			if(state == 11)
-//				act_flag = 2, img_color = 0xFDEB;
-//	//	进环后（左环
-//		if(act_flag == 2)
-//			if(state == 1)
-//				act_flag = 3, img_color = 0xED2A;
-//	//	环内到出环（左环
-//		if(act_flag == 3)
-//			if(state == 13)
-//				act_flag = 4, img_color = 0x31A7;
-//	//	出环后离开环道（左环
-//		if(act_flag == 4)
-//			if(state == 14)
-//				act_flag = 5, img_color = 0x64D0;
-//	//	由环道进入其他赛道
-//		if(act_flag == 5)
-//			if(state == 0)
-//				act_flag = 0, img_color = 0xAE9C;
-//	}
-//}
 /*------------------------------*/
 /*	    垂直边界点寻找模块		*/
 /*==============================*/

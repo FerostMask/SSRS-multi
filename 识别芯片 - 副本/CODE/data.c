@@ -46,7 +46,7 @@ unsigned char lvet_trafcount, rvet_trafcount;//转变点计数
 unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//截止列
 unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;//出口
 //	状态机
-unsigned char act_flag, act_flag_temp;
+unsigned char act_flag, act_flag_temp, fragile_flag;
 unsigned short img_color = 0xAE9C;
 /*----------------------*/
 /*	 	 电磁模块		*/

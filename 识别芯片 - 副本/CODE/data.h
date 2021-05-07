@@ -50,7 +50,7 @@ extern unsigned char lvet_trafcount, rvet_trafcount;
 extern unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//½ØÖ¹ÁÐ
 extern unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;
 //	×´Ì¬»ú
-extern unsigned char act_flag, act_flag_temp;
+extern unsigned char act_flag, act_flag_temp, fragile_flag;
 extern unsigned short img_color;
 //
 /*----------------------*/
