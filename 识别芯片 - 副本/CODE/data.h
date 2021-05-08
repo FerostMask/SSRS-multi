@@ -41,9 +41,8 @@ extern unsigned char ltraf_point_row[10], rtraf_point_row[10], ltraf_point_col[1
 extern unsigned char ltraf_flag[10], rtraf_flag[10];
 extern unsigned char lcut, rcut;
 extern unsigned char ltraf_count, rtraf_count;
-extern unsigned char lef_para[20], rig_para[20], lefpara_count, rigpara_count;
 //	转向判断
-extern unsigned char turn_flag;
+
 //	垂直边线寻找
 extern unsigned char topbor[MT9V03X_W-4], bottombor[MT9V03X_W-4];//上下边线
 extern unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoint_col[5], rvet_trafpoint_col[5];

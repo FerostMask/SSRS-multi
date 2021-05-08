@@ -66,7 +66,19 @@ int main(void){
 	while(1){
 	//	此处编写需要循环执行的代码
 		if(mt9v03x_finish_flag){
+		//	大津法二值化获取阈值、图像二值化
 			otsu();
+			img_binary();
+		//	边界寻找
+			left_fop_search();
+			lbor_search();
+			right_fop_search();
+			rbor_search();
+			if(ltraf_count) border_vertical_leftsearch();
+			if(rtraf_count) border_vertical_rightsearch();
+		//	图像显示
+			if(csimenu_flag[0]) binary_disp();
+			if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
 		}
 	}
 }
