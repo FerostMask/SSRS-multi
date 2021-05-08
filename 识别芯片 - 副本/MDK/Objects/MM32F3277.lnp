@@ -8,6 +8,7 @@
 ".\objects\menu_2.o"
 ".\objects\init.o"
 ".\objects\cam.o"
+".\objects\ctrl.o"
 ".\objects\board.o"
 ".\objects\common.o"
 ".\objects\seekfree_printf.o"

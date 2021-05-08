@@ -10,6 +10,14 @@
 /*------------------------------------------------------*/ 
 /* 						º¯ÊýÉùÃ÷ 						*/
 /*======================================================*/
+void state_machine(void);
+void state_machine_fork(void);
+void state_machine_cross(void);
+void state_machine_ring(void);
+void state_machine_bend(void);
+void state_machine_enter(void);
+char slope_cal(char num);
+void vert_slope_cal(char num);
 void border_vertical_leftsearch(void);
 void border_vertical_rightsearch(void);
 void binary_disp(void);

@@ -61,8 +61,8 @@ void menu2_init(void){
 					menu2mode = 0;
 					break;
 				case 1://µç´Å×ªÏò
-					value0 = &adc_steering.Kp;
-					value1 = &adc_steering.Kd;
+					value0 = &cam_steering.Kp;
+					value1 = &cam_steering.Kd;
 					menu2_limit = 1;
 					menu2mode = 1;
 					magflag = 1;

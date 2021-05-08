@@ -15,12 +15,13 @@
 /* 							 变量定义 							*/
 /*==============================================================*/
 short show_value[5];
-short angle_change[4];
+short traf_slope[4];
 short ave_slope[4];
 unsigned char show_point;
 unsigned char ac_flag[4];
 unsigned char exti_leftop, exti_rigtop;
 unsigned char lefhigh, righigh;
+unsigned char lefwidth, rigwidth;
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/
@@ -66,13 +67,20 @@ void binary_disp(void){
 		ips200_drawpoint(i, bottombor[i], 0x74ec);
 	for(i = 159; i > rigtop_cut; i--)
 		ips200_drawpoint(i, topbor[i], 0x74ec);	
-//	ips200_showint16(160, 0, act_flag);
-//	ips200_showint16(160, 1, turn_flag);
-//	ips200_showint16(170, 1, show_value[0]);
-//	ips200_showint16(170, 2, show_value[1]);
-//	ips200_showint16(170, 3, show_value[2]);
-//	ips200_showint16(170, 4, show_value[3]);
-//	ips200_showint16(170, 5, show_value[4]);
+	ips200_showint16(160, 0, state);
+	ips200_showint16(160, 1, act_flag);
+//	显示目标点
+	ips200_drawpoint(p_target[1]+2, p_target[0], 0xED2A);
+	ips200_drawpoint(p_target[1]-2, p_target[0], 0xED2A);
+	ips200_drawpoint(p_target[1], p_target[0], 0xED2A);
+	ips200_drawpoint(p_target[1], p_target[0]+2, 0xED2A);
+	ips200_drawpoint(p_target[1], p_target[0]-2, 0xED2A);
+	
+	ips200_showint16(170, 2, show_value[0]);
+	ips200_showint16(170, 3, show_value[1]);
+//	ips200_showint16(170, 4, show_value[2]);
+//	ips200_showint16(170, 5, show_value[3]);
+//	ips200_showint16(170, 6, show_value[4]);
 	
 //	ips200_showfloat(170, 1, show_value[0], 2, 2);
 //	ips200_showfloat(170, 2, show_value[1], 2, 2);
@@ -86,69 +94,195 @@ void binary_disp(void){
 //	ips200_drawpoint(0, show_point+2, RED);
 }
 /*------------------------------*/
+/*	    	状态机模块			*/
+/*==============================*/
+void state_machine(void){
+//	初始化
+	state_temp = state, state = 0;
+//	检测赛道类型
+	if(!exti_lefcount)
+		if(!exti_rigcount){//没有出口 | 直道 | 弯道丢边 | 弯入岔道
+			if(abs(found_point[0]-rcut)<5)
+				{state = 1;slope_cal(1);return;}
+			if(abs(found_point[2]-lcut)<5)
+				{state = 2;return;}
+		}
+	if(exti_lefcount)
+		if(!exti_rigcount){//只有左边有出口 | 左弯 | 左环 | 十字丢边
+		//	没有直道延伸
+			if(abs(ltraf_point_row[exti_leftop] - rcut) < 5)
+				{state = 3;return;}//左弯
+		//	有直道延伸
+			if(lefhigh > 9)
+				if(lefhigh < 23){
+					slope_cal(3);
+				}
+	}
+	if(exti_rigcount)
+		if(!exti_lefcount){//只有右边有出口 | 右弯 | 右环 | 十字丢边
+			if(abs(rtraf_point_row[exti_rigtop] - lcut) < 5)//右弯
+				{state = 4; return;}
+		}
+	if(exti_lefcount)
+		if(exti_rigcount){//两边都有出口 | 十字 | 岔道
+		
+		}
+}
+/*------------------------------*/
+/*	    	岔道状态机			*/
+/*==============================*/
+void state_machine_fork(void){
+}
+/*------------------------------*/
+/*	    	十字状态机			*/
+/*==============================*/
+void state_machine_cross(void){
+}
+/*------------------------------*/
+/*	    	环道状态机			*/
+/*==============================*/
+void state_machine_ring(void){
+	switch(act_flag){
+	
+	}
+}
+/*-
+/*------------------------------*/
+/*	    	弯道状态机			*/
+/*==============================*/
+void state_machine_bend(void){
+	switch(act_flag){
+		case 1:
+			if(state!=1)
+				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			return;
+		case 2:
+			if(state!=2)
+				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			return;
+		case 3:
+			if(state!=3)
+				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			return;
+		case 4:
+			if(state!=4)
+				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			return;
+	}
+}
+/*------------------------------*/
+/*	    	状态机入口			*/
+/*==============================*/
+void state_machine_enter(void){
+	switch(state){
+	//	弯道、弯道丢边
+		case 1:
+			act_flag = 1, state_flag = 1, img_color = 0x6DDD;
+			return;
+		case 2:
+			act_flag = 2, state_flag = 1, img_color = 0x6DDD;
+			return;
+		case 3:
+			act_flag = 3, state_flag = 1, img_color = 0x7EFE;
+			return;
+		case 4:
+			act_flag = 4, state_flag = 1, img_color = 0x7EFE;
+			return;
+	//	圆环
+	//	十字、十字丢边
+	//	岔道
+	}
+}
+/*------------------------------*/
 /*	   	 边线斜率分析模块		*/
 /*==============================*/
 char slope_cal(char num){
 //	变量定义
 	register char i;
-	unsigned char mp[5];
-	short slope[4];
-	short angle[3];
+	unsigned char mp[4];
+	short slope[2];
+	short angle;
 //	计算斜率
 	switch(num){
 	//	左转
 		case 1:
-			mp[0] = rcut+1, mp[4] = found_point[2];
-			mp[2] = (mp[0]+mp[4])>>1;
-			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
-		//	计算斜率
-			for(i = 0; i < 4; i++)
-				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-			for(i = 0; i < 3; i++)
-				angle[i] = slope[i+1] - slope[i];
-			if(angle[0]+angle[1]+angle[2] < -150) return 1;
-			else return 0;
-//			show_value[0] = angle[0]+angle[1]+angle[2];
+			mp[0] = rcut+1;
+			mp[2] = mp[0] >> 1;
+			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
+			slope[0] = (float)(rigbor[mp[0]]-rigbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
+			slope[1] = (float)(rigbor[mp[1]]-rigbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
 			break;
 	//	右转
 		case 2:
-			mp[0] = lcut+1, mp[4] = found_point[0];
-			mp[2] = (mp[0]+mp[4])>>1;
-			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
-		//	计算斜率
-			for(i = 0; i < 4; i++)
-				slope[i] = atan((float)(lefbor[mp[i+1]]-lefbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-			for(i = 0; i < 3; i++)
-				angle[i] = slope[i+1] - slope[i];
-			if(angle[0]+angle[1]+angle[2] > 150) return 1;
-			else return 0;
-//			show_value[1] = angle[0]+angle[1]+angle[2];
+			mp[0] = lcut+1;
+			mp[2] = mp[0] >> 1;
+			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
+			slope[0] = (float)(lefbor[mp[0]]-lefbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
+			slope[1] = (float)(lefbor[mp[1]]-lefbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
 			break;
-	//	右直线检测 | 左环道辅助
+	//	圆环辅助
 		case 3:
-			mp[0] = ltraf_point_row[exti_leftop], mp[4] = found_point[0];
-			mp[2] = (mp[0]+mp[4])>>1;
-			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
-		//	计算斜率
-			for(i = 0; i < 4; i++)
-				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-			for(i = 0; i < 3; i++)
-				angle[i] = slope[i+1] - slope[i];
-			show_value[0] = angle[0]+angle[1]+angle[2];
-			if(abs(angle[0]+angle[1]+angle[2]) < 500) return 1;
-			else return 0;
+			mp[0] = ltraf_point_row[exti_leftop];
+			mp[2] = mp[0]+found_point[2] >> 1;
+			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
+			slope[0] = (float)(rigbor[mp[0]]-rigbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
+			slope[1] = (float)(rigbor[mp[1]]-rigbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
+			show_value[0] = slope[0];
+			show_value[1] = slope[1];
 			break;
 	}
+//	switch(num){
+//	//	左转
+//		case 1:
+//			mp[0] = rcut+1, mp[4] = found_point[2];
+//			mp[2] = (mp[0]+mp[4])>>1;
+//			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
+//		//	计算斜率
+//			for(i = 0; i < 4; i++)
+//				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
+//			for(i = 0; i < 3; i++)
+//				angle[i] = slope[i+1] - slope[i];
+//			if(angle[0]+angle[1]+angle[2] < -150) return 1;
+//			else return 0;
+////			show_value[0] = angle[0]+angle[1]+angle[2];
+//			break;
+//	//	右转
+//		case 2:
+//			mp[0] = lcut+1, mp[4] = found_point[0];
+//			mp[2] = (mp[0]+mp[4])>>1;
+//			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
+//		//	计算斜率
+//			for(i = 0; i < 4; i++)
+//				slope[i] = atan((float)(lefbor[mp[i+1]]-lefbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
+//			for(i = 0; i < 3; i++)
+//				angle[i] = slope[i+1] - slope[i];
+//			if(angle[0]+angle[1]+angle[2] > 150) return 1;
+//			else return 0;
+////			show_value[1] = angle[0]+angle[1]+angle[2];
+//			break;
+//	//	右直线检测 | 左环道辅助
+//		case 3:
+//			mp[0] = ltraf_point_row[exti_leftop], mp[4] = found_point[0];
+//			mp[2] = (mp[0]+mp[4])>>1;
+//			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
+//		//	计算斜率
+//			for(i = 0; i < 4; i++)
+//				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
+//			for(i = 0; i < 3; i++)
+//				angle[i] = slope[i+1] - slope[i];
+////			show_value[0] = angle[0]+angle[1]+angle[2];
+//			if(abs(angle[0]+angle[1]+angle[2]) < 500) return 1;
+//			else return 0;
+//			break;
+//	}
 }
 /*------------------------------*/
 /*	   垂直边线斜率分析模块		*/
 /*==============================*/
 void vert_slope_cal(char num){//点太少不要执行这个函数
 //	变量定义
-	register char i;
 	unsigned char mp[4];
-	short slope[3];
-	short angle[2];
+	short slope[2];
 //	计算斜率
 	switch(num){
 	//	左上
@@ -157,28 +291,23 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[2] = leftop_cut>>1;
 			mp[1] = mp[2]>>1, mp[3] = (mp[2]+leftop_cut)>>1;
 		//	计算斜率
-			for(i = 0; i < 3; i++)
-				slope[i] = atan((float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-		//	计算角度变化
-			for(i = 0; i < 2; i++)
-				angle[i] = slope[i+1] - slope[i];
-			angle_change[0] = angle[0]+angle[1], ac_flag[0] = 1;
-			ave_slope[0] = (angle[0]+angle[1])>>1;
-//			show_value[0] = angle_change[0];
-//			show_value[0] = ave_slope[0];
+			slope[0] = (float)(topbor[mp[2]]-topbor[mp[0]])/(float)(mp[2]-mp[0])*1000;
+			slope[1] = (float)(topbor[mp[3]]-topbor[mp[1]])/(float)(mp[3]-mp[1])*1000;
+			traf_slope[0] = slope[0]-slope[1];
+			ave_slope[0] = (slope[0]+slope[1])>>1;
+//			show_value[0] = traf_slope[0];
+//			show_value[0] = ave_slope[1];
 			break;
 	//	左下
 		case 1:
 			mp[0] = 0;
 			mp[2] = lefbottom_cut>>1;
 			mp[1] = mp[2]>>1, mp[3] = (mp[2]+lefbottom_cut)>>1;
-			for(i = 0; i < 3; i++)
-				slope[i] = atan((float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-			for(i = 0; i < 2; i++)
-				angle[i] = slope[i+1] - slope[i];
-			angle_change[1] = angle[0]+angle[1], ac_flag[1] = 1;
-			ave_slope[1] = (angle[0]+angle[1])>>1;
-//			show_value[1] = angle_change[1];
+			slope[0] = (float)(topbor[mp[2]]-topbor[mp[0]])/(float)(mp[2]-mp[0])*1000;
+			slope[1] = (float)(topbor[mp[3]]-topbor[mp[1]])/(float)(mp[3]-mp[1])*1000;
+			traf_slope[1] = slope[0]-slope[1];
+			ave_slope[1] = (slope[0]+slope[1])>>1;
+//			show_value[1] = traf_slope[1];
 //			show_value[1] = ave_slope[1];
 			break;
 	//	右上
@@ -186,13 +315,11 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[0] = 159;
 			mp[2] = (rigtop_cut+mp[0])>>1;
 			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+rigtop_cut)>>1;
-			for(i = 0; i < 3; i++)
-				slope[i] = atan((float)(topbor[mp[i+1]]-topbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-			for(i = 0; i < 2; i++)
-				angle[i] = slope[i+1] - slope[i];
-			angle_change[2] = angle[0]+angle[1], ac_flag[2] = 1;
-			ave_slope[2] = (angle[0]+angle[1])>>1;
-//			show_value[2] = angle_change[2];
+			slope[0] = (float)(topbor[mp[2]]-topbor[mp[0]])/(float)(mp[2]-mp[0])*1000;
+			slope[1] = (float)(topbor[mp[3]]-topbor[mp[1]])/(float)(mp[3]-mp[1])*1000;
+			traf_slope[2] = slope[0]-slope[1];
+			ave_slope[2] = (slope[0]+slope[1])>>1;
+//			show_value[2] = traf_slope[2];
 //			show_value[2] = ave_slope[2];
 			break;
 	//	右下
@@ -200,13 +327,11 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 			mp[0] = 159;
 			mp[2] = (rigbottom_cut+mp[0])>>1;
 			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+rigbottom_cut)>>1;
-			for(i = 0; i < 3; i++)
-				slope[i] = atan((float)(bottombor[mp[i+1]]-bottombor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-			for(i = 0; i < 2; i++)
-				angle[i] = slope[i+1] - slope[i];
-			angle_change[3] = angle[0]+angle[1], ac_flag[3] = 1;
-			ave_slope[3] = (angle[0]+angle[1])>>1;
-//			show_value[3] = angle_change[3];
+			slope[0] = (float)(topbor[mp[2]]-topbor[mp[0]])/(float)(mp[2]-mp[0])*1000;
+			slope[1] = (float)(topbor[mp[3]]-topbor[mp[1]])/(float)(mp[3]-mp[1])*1000;
+			traf_slope[3] = slope[0]-slope[1];
+			ave_slope[3] = (slope[0]+slope[1])>>1;
+//			show_value[3] = traf_slope[3];
 //			show_value[3] = ave_slope[3];
 			break;
 	}
@@ -403,7 +528,7 @@ void lbor_search(void){
 			break;
 	}
 //	向上检测
-	for(i--; i > 3; i--){
+	for(i--; i > 0; i--){
 	//	初始化换行、方向检测
 		p -= col;
 		if(traf_flag!=traf_flag_temp) 
@@ -514,7 +639,7 @@ void rbor_search(void){
 //	限制边界
 	if(j == 19) j--, p--;
 //	向上检测
-	for(i--; i > 3; i--){
+	for(i--; i > 0; i--){
 	//	初始化换行、方向检测
 		p -= col;
 		if(traf_flag!=traf_flag_temp) 

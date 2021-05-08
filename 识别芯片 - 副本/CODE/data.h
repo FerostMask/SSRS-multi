@@ -52,6 +52,12 @@ extern unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;
 //	状态机
 extern unsigned char act_flag, act_flag_temp, fragile_flag;
 extern unsigned short img_color;
+extern unsigned char state, state_temp;
+extern unsigned char state_flag;
+extern void(*state_pfc[])(void);
+//	控制相关
+extern unsigned char p_target[2];
+extern void(*ctrl_pfc[])(void);
 //
 /*----------------------*/
 /*	 	 电磁模块		*/

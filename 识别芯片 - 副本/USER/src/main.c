@@ -21,6 +21,7 @@
 /*==============================================================*/
 #include "headfile.h"
 #include "CAM.h"
+#include "pid.h"
 #include "Init.h"
 #include "data.h"
 #include "eident.h" 
@@ -76,6 +77,11 @@ int main(void){
 			rbor_search();
 			if(ltraf_count) border_vertical_leftsearch();
 			if(rtraf_count) border_vertical_rightsearch();
+		//	×´Ì¬»ú
+			state_machine();
+			if(state_temp!=state) state_pfc[state_flag]();
+			ctrl_pfc[act_flag]();
+			pos_pid(&cam_steering, 80, p_target[1], 100, -100);
 		//	Í¼ÏñÏÔÊ¾
 			if(csimenu_flag[0]) binary_disp();
 			if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);

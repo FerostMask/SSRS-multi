@@ -29,3 +29,5 @@
 .\objects\data.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\data.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_uart.h
 .\objects\data.o: ..\CODE\eident.h
+.\objects\data.o: ..\CODE\CAM.h
+.\objects\data.o: ..\CODE\ctrl.h

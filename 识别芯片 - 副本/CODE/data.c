@@ -3,6 +3,8 @@
 /*==============================================================*/
 #include "data.h"
 #include "eident.h"
+#include "CAM.h"
+#include "ctrl.h"
 /*--------------------------------------------------------------*/
 /*							  宏定义							*/
 /*==============================================================*/
@@ -47,7 +49,13 @@ unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//截止列
 unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;//出口
 //	状态机
 unsigned char act_flag, act_flag_temp, fragile_flag;
+unsigned char state, state_temp;
+unsigned char state_flag;
 unsigned short img_color = 0xAE9C;
+void(*state_pfc[])(void) = {state_machine_enter, state_machine_bend, state_machine_ring, state_machine_cross, state_machine_fork};
+//	控制相关
+unsigned char p_target[2];
+void(*ctrl_pfc[])(void) = {cam_ctrl_direct, cam_ctrl_bend, cam_ctrl_ring, cam_ctrl_cross, cam_ctrl_fork};
 /*----------------------*/
 /*	 	 电磁模块		*/
 /*======================*/
@@ -62,7 +70,7 @@ struct adcerrpa adc_err;
 unsigned char ajug_sta, act_sta;
 unsigned short Kp_act = 50;
 short spd, spd_bias;
-short spd_adcset = 60;
+short spd_adcset = 20;
 char rad_bias = 0;
 //	指针函数
 void(*adc_pfc[])(void) = {cross_road};
@@ -124,8 +132,8 @@ void Init_para(void){
 	adc_straight.Kp = 1;
 	adc_straight.Kd = 1;
 //	CAM转向
-	cam_steering.Kp = 1;
-	cam_steering.Kd = 1;
+	cam_steering.Kp = 0.5;
+	cam_steering.Kd = 0.1;
 ////	速度
 //	speed.alpha = 0.3;
 //	speed.Kp = 0.1;//反应快慢 | 超调
