@@ -70,7 +70,7 @@ struct adcerrpa adc_err;
 unsigned char ajug_sta, act_sta;
 unsigned short Kp_act = 50;
 short spd, spd_bias;
-short spd_adcset = 20;
+short spd_adcset = 40;
 char rad_bias = 0;
 //	指针函数
 void(*adc_pfc[])(void) = {cross_road};
@@ -132,8 +132,8 @@ void Init_para(void){
 	adc_straight.Kp = 1;
 	adc_straight.Kd = 1;
 //	CAM转向
-	cam_steering.Kp = 0.5;
-	cam_steering.Kd = 0.1;
+	cam_steering.Kp = 2.6;
+	cam_steering.Kd = 1.1;
 ////	速度
 //	speed.alpha = 0.3;
 //	speed.Kp = 0.1;//反应快慢 | 超调

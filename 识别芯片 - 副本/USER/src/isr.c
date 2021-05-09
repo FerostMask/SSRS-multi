@@ -58,7 +58,7 @@ void TIM2_IRQHandler (void)
 	single_ch_filter(&adc4);
 //	adc_jug();
 //	adc_suminus();
-	uart_putchar(UART_7, cam_steering.rs);
+//	uart_putchar(UART_7, cam_steering.rs);
 //	°²È«Ëø
 	spd = spd_adcset;
 	if(adc0.value == 0)

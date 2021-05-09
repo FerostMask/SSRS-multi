@@ -80,8 +80,11 @@ int main(void){
 		//	×´Ì¬»ú
 			state_machine();
 			if(state_temp!=state) state_pfc[state_flag]();
-			ctrl_pfc[act_flag]();
-			pos_pid(&cam_steering, 80, p_target[1], 100, -100);
+			spd_adcset = 60;
+			ctrl_pfc[state_flag]();
+			p_target[0] = 62, p_target[1] = (lefbor[62]+rigbor[62])>>1;
+			pos_pid(&cam_steering, 80, p_target[1], 120, -120);
+			uart_putchar(UART_7, cam_steering.rs);
 		//	Í¼ÏñÏÔÊ¾
 			if(csimenu_flag[0]) binary_disp();
 			if(csimenu_flag[1]) ips200_displayimage032(mt9v03x_image[0], MT9V03X_W, MT9V03X_H);

@@ -17,6 +17,7 @@
 short show_value[5];
 short traf_slope[4];
 short ave_slope[4];
+short line_slope_diff;
 unsigned char show_point;
 unsigned char ac_flag[4];
 unsigned char exti_leftop, exti_rigtop;
@@ -114,8 +115,10 @@ void state_machine(void){
 				{state = 3;return;}//左弯
 		//	有直道延伸
 			if(lefhigh > 9)
-				if(lefhigh < 23){
-					slope_cal(3);
+				if(lefhigh < 23){//环道判断
+					if(found_point[2] > exti_lefp[0]+10)
+						slope_cal(3);
+						if(abs(line_slope_diff) < 100);//判断右边是直线
 				}
 	}
 	if(exti_rigcount)
@@ -207,7 +210,7 @@ char slope_cal(char num){
 	//	左转
 		case 1:
 			mp[0] = rcut+1;
-			mp[2] = mp[0] >> 1;
+			mp[2] = (mp[0]+99) >> 1;
 			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
 			slope[0] = (float)(rigbor[mp[0]]-rigbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
 			slope[1] = (float)(rigbor[mp[1]]-rigbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
@@ -215,7 +218,7 @@ char slope_cal(char num){
 	//	右转
 		case 2:
 			mp[0] = lcut+1;
-			mp[2] = mp[0] >> 1;
+			mp[2] = (mp[0]+99) >> 1;
 			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
 			slope[0] = (float)(lefbor[mp[0]]-lefbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
 			slope[1] = (float)(lefbor[mp[1]]-lefbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
@@ -227,54 +230,11 @@ char slope_cal(char num){
 			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
 			slope[0] = (float)(rigbor[mp[0]]-rigbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
 			slope[1] = (float)(rigbor[mp[1]]-rigbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
-			show_value[0] = slope[0];
-			show_value[1] = slope[1];
+			line_slope_diff = slope[0]-slope[1];
+//			show_value[0] = slope[0];
+//			show_value[1] = slope[1];
 			break;
 	}
-//	switch(num){
-//	//	左转
-//		case 1:
-//			mp[0] = rcut+1, mp[4] = found_point[2];
-//			mp[2] = (mp[0]+mp[4])>>1;
-//			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
-//		//	计算斜率
-//			for(i = 0; i < 4; i++)
-//				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-//			for(i = 0; i < 3; i++)
-//				angle[i] = slope[i+1] - slope[i];
-//			if(angle[0]+angle[1]+angle[2] < -150) return 1;
-//			else return 0;
-////			show_value[0] = angle[0]+angle[1]+angle[2];
-//			break;
-//	//	右转
-//		case 2:
-//			mp[0] = lcut+1, mp[4] = found_point[0];
-//			mp[2] = (mp[0]+mp[4])>>1;
-//			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
-//		//	计算斜率
-//			for(i = 0; i < 4; i++)
-//				slope[i] = atan((float)(lefbor[mp[i+1]]-lefbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-//			for(i = 0; i < 3; i++)
-//				angle[i] = slope[i+1] - slope[i];
-//			if(angle[0]+angle[1]+angle[2] > 150) return 1;
-//			else return 0;
-////			show_value[1] = angle[0]+angle[1]+angle[2];
-//			break;
-//	//	右直线检测 | 左环道辅助
-//		case 3:
-//			mp[0] = ltraf_point_row[exti_leftop], mp[4] = found_point[0];
-//			mp[2] = (mp[0]+mp[4])>>1;
-//			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
-//		//	计算斜率
-//			for(i = 0; i < 4; i++)
-//				slope[i] = atan((float)(rigbor[mp[i+1]]-rigbor[mp[i]])/(float)(mp[i+1]-mp[i]))*573;
-//			for(i = 0; i < 3; i++)
-//				angle[i] = slope[i+1] - slope[i];
-////			show_value[0] = angle[0]+angle[1]+angle[2];
-//			if(abs(angle[0]+angle[1]+angle[2]) < 500) return 1;
-//			else return 0;
-//			break;
-//	}
 }
 /*------------------------------*/
 /*	   垂直边线斜率分析模块		*/
@@ -287,27 +247,27 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 	switch(num){
 	//	左上
 		case 0:
-			mp[0] = 0;
+			mp[0] = leftop_cut;
 			mp[2] = leftop_cut>>1;
-			mp[1] = mp[2]>>1, mp[3] = (mp[2]+leftop_cut)>>1;
+			mp[1] = (mp[2]+mp[0])>>1, mp[3] = mp[2]>>1;
 		//	计算斜率
 			slope[0] = (float)(topbor[mp[2]]-topbor[mp[0]])/(float)(mp[2]-mp[0])*1000;
 			slope[1] = (float)(topbor[mp[3]]-topbor[mp[1]])/(float)(mp[3]-mp[1])*1000;
 			traf_slope[0] = slope[0]-slope[1];
 			ave_slope[0] = (slope[0]+slope[1])>>1;
-//			show_value[0] = traf_slope[0];
+			show_value[0] = traf_slope[0];
 //			show_value[0] = ave_slope[1];
 			break;
 	//	左下
 		case 1:
-			mp[0] = 0;
-			mp[2] = lefbottom_cut>>1;
-			mp[1] = mp[2]>>1, mp[3] = (mp[2]+lefbottom_cut)>>1;
+			mp[0] = lefbottom_cut;
+			mp[2] = (lefbottom_cut+159)>>1;
+			mp[1] = (mp[2]+mp[0])>>1, mp[3] = (mp[2]+159)>>1;
 			slope[0] = (float)(topbor[mp[2]]-topbor[mp[0]])/(float)(mp[2]-mp[0])*1000;
 			slope[1] = (float)(topbor[mp[3]]-topbor[mp[1]])/(float)(mp[3]-mp[1])*1000;
 			traf_slope[1] = slope[0]-slope[1];
 			ave_slope[1] = (slope[0]+slope[1])>>1;
-//			show_value[1] = traf_slope[1];
+			show_value[1] = traf_slope[1];
 //			show_value[1] = ave_slope[1];
 			break;
 	//	右上
