@@ -54,6 +54,7 @@ void(*state_pfc[])(void) = {state_machine_enter, state_machine_bend, state_machi
 //	控制相关
 short p_target[2];
 short error_flit[8], ctrl_error1, ctrl_error2;
+short spd_slow;
 void(*ctrl_pfc[])(void) = {cam_ctrl_direct, cam_ctrl_bend, cam_ctrl_ring, cam_ctrl_cross, cam_ctrl_fork};
 /*----------------------*/
 /*	 	 电磁模块		*/

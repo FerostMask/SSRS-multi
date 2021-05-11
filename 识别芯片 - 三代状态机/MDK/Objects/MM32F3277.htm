@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F3277.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F3277.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 11 20:54:45 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 11 22:15:51 2021
 <BR><P>
 <H3>Maximum Stack Usage =       1136 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -813,7 +813,7 @@ Global Symbols
 <P><STRONG><a name="[2e]"></a>TIM1_UP_IRQHandler</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, isr.o(i.TIM1_UP_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mm32f327x_keil.o(RESET)
 </UL>
-<P><STRONG><a name="[31]"></a>TIM2_IRQHandler</STRONG> (Thumb, 102 bytes, Stack size 8 bytes, isr.o(i.TIM2_IRQHandler))
+<P><STRONG><a name="[31]"></a>TIM2_IRQHandler</STRONG> (Thumb, 180 bytes, Stack size 8 bytes, isr.o(i.TIM2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TIM2_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mm32f327x_keil.o(RESET)
@@ -1038,19 +1038,19 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[6]"></a>cam_ctrl_bend</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_bend))
+<P><STRONG><a name="[6]"></a>cam_ctrl_bend</STRONG> (Thumb, 98 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_bend))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[8]"></a>cam_ctrl_cross</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_cross))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[5]"></a>cam_ctrl_direct</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_direct))
+<P><STRONG><a name="[5]"></a>cam_ctrl_direct</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_direct))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[9]"></a>cam_ctrl_fork</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_fork))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[7]"></a>cam_ctrl_ring</STRONG> (Thumb, 74 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_ring))
+<P><STRONG><a name="[7]"></a>cam_ctrl_ring</STRONG> (Thumb, 76 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_ring))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[a3]"></a>camera_dma_init</STRONG> (Thumb, 122 bytes, Stack size 56 bytes, zf_camera.o(i.camera_dma_init))
@@ -1620,7 +1620,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;state_machine
 </UL>
 
-<P><STRONG><a name="[de]"></a>state_machine</STRONG> (Thumb, 358 bytes, Stack size 8 bytes, cam.o(i.state_machine))
+<P><STRONG><a name="[de]"></a>state_machine</STRONG> (Thumb, 374 bytes, Stack size 8 bytes, cam.o(i.state_machine))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = state_machine &rArr; slope_cal &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;slope_cal
@@ -1640,7 +1640,7 @@ Global Symbols
 <P><STRONG><a name="[4]"></a>state_machine_fork</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, cam.o(i.state_machine_fork))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[2]"></a>state_machine_ring</STRONG> (Thumb, 122 bytes, Stack size 0 bytes, cam.o(i.state_machine_ring))
+<P><STRONG><a name="[2]"></a>state_machine_ring</STRONG> (Thumb, 136 bytes, Stack size 0 bytes, cam.o(i.state_machine_ring))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[e5]"></a>swdisplay</STRONG> (Thumb, 514 bytes, Stack size 24 bytes, menu_2.o(i.swdisplay))
@@ -1741,7 +1741,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;border_vertical_rightsearch
 </UL>
 
-<P><STRONG><a name="[f8]"></a>vert_slope_cal</STRONG> (Thumb, 936 bytes, Stack size 72 bytes, cam.o(i.vert_slope_cal))
+<P><STRONG><a name="[f8]"></a>vert_slope_cal</STRONG> (Thumb, 920 bytes, Stack size 72 bytes, cam.o(i.vert_slope_cal))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = vert_slope_cal &rArr; atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul

@@ -57,10 +57,10 @@ void menu2_init(void){
 			tim_interrupt_disabnle(TIM_2);
 			switch(menu[menu_index]){
 				case 0://角速度
-					value0 = &acw.alpha;
-					value1 = &acw.Kp;
-					value2 = &acw.Ki;
-					value3 = &acw.Kd;
+					value0 = &lmor.alpha;
+					value1 = &lmor.Kp;
+					value2 = &lmor.Ki;
+					value3 = &lmor.Kd;
 					menu2_limit = 3;
 					menu2mode = 0;
 					break;
@@ -71,10 +71,10 @@ void menu2_init(void){
 					menu2mode = 1;
 					break;
 				case 2://速度
-					value0 = &speed.alpha;
-					value1 = &speed.Kp;
-					value2 = &speed.Ki;
-					value3 = &speed.Kd;
+					value0 = &rmor.alpha;
+					value1 = &rmor.Kp;
+					value2 = &rmor.Ki;
+					value3 = &rmor.Kd;
 					menu2_limit = 3;
 					menu2mode = 0;
 					break;

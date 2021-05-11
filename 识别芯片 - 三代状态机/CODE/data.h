@@ -56,6 +56,7 @@ extern void(*state_pfc[])(void);
 //	¿ØÖÆÏà¹Ø
 extern short p_target[2];
 extern short error_flit[8], ctrl_error1, ctrl_error2;
+extern short spd_slow;
 extern void(*ctrl_pfc[])(void);
 //
 /*----------------------*/

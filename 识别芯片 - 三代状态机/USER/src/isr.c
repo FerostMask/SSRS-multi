@@ -54,8 +54,9 @@ void TIM2_IRQHandler (void)
 /*======================*/
 	for(i = 6; i > -1; i--) error_flit[i+1] = error_flit[i];
 	ctrl_error2 = ctrl_error1;
-	ctrl_error1 = 80 - p_target[1];
+	ctrl_error1 = abs(80 - p_target[1]);
 	error_flit[0] =  abs(ctrl_error2-ctrl_error1);
+	spd_slow = (error_flit[0]+error_flit[1]+error_flit[2]+error_flit[3]+error_flit[4]+error_flit[5]+error_flit[6]+error_flit[7])>>3;
 /*----------------------*/
 /*	 	 µç´Å²¿·Ö		*/
 /*======================*/

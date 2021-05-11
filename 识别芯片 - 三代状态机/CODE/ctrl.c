@@ -33,7 +33,7 @@ void cam_ctrl_ring(void){
 	switch(act_flag){
 		case 12:
 //			p_target[1]-=14;
-			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(150>>(spd_adcset>>4));
+			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(300>>(spd_adcset>>4));
 			break;
 		case 13:
 			break;
@@ -52,13 +52,19 @@ void cam_ctrl_bend(void){
 	unsigned char mp;
 	float slope_temp;
 //	控制
-	spd_adcset = 50;
+	spd_adcset = 50-(spd_slow>>1);
 	switch(act_flag){
 		case 1:
 			p_target[1] -=5;
 			break;
 		case 2:
 			p_target[1] +=5;
+			break;
+		case 3:
+			p_target[1] -=3;
+			break;
+		case 4:
+			p_target[1] +=3;
 			break;
 	}
 //	if(act_flag == 2){//右转
@@ -79,7 +85,10 @@ void cam_ctrl_direct(void){
 //	变量定义
 	unsigned char point_temp;
 //	控制
-	spd_adcset = 60;
+	spd_adcset = 70;
+	if(exti_lefcount > 0)
+		if(!exti_rigcount)
+			spd_adcset = 50;
 //	if(ltraf_count)
 //		if(rtraf_count){
 //			if(ltraf_count > rtraf_count) point_temp = ltraf_point_row[ltraf_count-1]-2;

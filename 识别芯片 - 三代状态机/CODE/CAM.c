@@ -120,6 +120,7 @@ void state_machine(void){
 		}
 	if(exti_lefcount)
 		if(!exti_rigcount){//只有左边有出口 | 左弯 | 左环 | 十字丢边
+			show_value[0] = lefwidth;
 		//	没有直道延伸
 			if(abs(ltraf_point_row[exti_leftop] - rcut) < 5)
 				{state = 3;return;}//左弯
@@ -131,7 +132,7 @@ void state_machine(void){
 						if(abs(line_slope_diff) < 120){//判断右边是直线 | 120
 							if(traf_slope[1] > 75)//90
 								if(traf_slope[0] > 30)//0
-									{state = 12;return;}
+									{state = 12, lefwidth = lefhigh;return;}
 						}
 				}
 	}
@@ -171,12 +172,13 @@ void state_machine_ring(void){
 				act_flag = 13, img_color = 0x46D0;
 				return;
 		case 13:
-			if(state == 4)
+			if(state == 4 || exti_rigcount == 1)
 				act_flag = 14, img_color = 0xB6DB;
 			return;
 		case 14:
 			if(state == 1)
-				act_flag = 15, img_color = 0xBDB8;
+				if(exti_rigcount == 0)
+					act_flag = 15, img_color = 0xBDB8;
 		case 15:
 			if(state == 0)
 				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
@@ -304,7 +306,7 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 				angle[i] = slope[i+1] - slope[i];
 			traf_slope[0] = angle[0]+angle[1], ac_flag[0] = 1;
 			ave_slope[0] = (angle[0]+angle[1])>>1;
-			show_value[0] = traf_slope[0];
+//			show_value[0] = traf_slope[0];
 //			show_value[0] = ave_slope[0];
 			break;
 	//	左下
@@ -318,7 +320,7 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 				angle[i] = slope[i+1] - slope[i];
 			traf_slope[1] = angle[0]+angle[1], ac_flag[1] = 1;
 			ave_slope[1] = (angle[0]+angle[1])>>1;
-			show_value[1] = traf_slope[1];
+//			show_value[1] = traf_slope[1];
 //			show_value[1] = ave_slope[1];
 			break;
 	//	右上
