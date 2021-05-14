@@ -220,6 +220,8 @@ void UART6_IRQHandler(void)
 	if(UART6->ISR & UART_ISR_RX_INTF)												// 串口接收缓冲中断
 	{
 		UART6->ICR |= UART_ICR_RXICLR;												// 清除中断标志位
+		uart_getchar(UART_6, &buff_get6);
+		if(yawa_flag) yawa+=(char)buff_get6;
 	}
 }
 

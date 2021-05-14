@@ -33,12 +33,12 @@ void cam_ctrl_ring(void){
 	switch(act_flag){
 		case 12:
 //			p_target[1]-=14;
-			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(300>>(spd_adcset>>4));
+			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(400>>(spd_adcset>>4));
 			break;
 		case 13:
 			break;
 		case 14:
-			p_target[1]-=50;
+			p_target[1]-=20;
 			break;
 		case 15:
 			break;

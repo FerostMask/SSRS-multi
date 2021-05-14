@@ -51,6 +51,7 @@ int main(void){
 	uart_init(UART_6, 115200, UART6_TX_C06, UART6_RX_C07);
 //	uart_init(UART_3, 115200, UART3_TX_B10, UART3_RX_B11);
 //	uart_rx_irq(UART_3, 1);
+	uart_rx_irq(UART_6, 1);
 /*----------------------*/
 /*	 	 用户初始化		*/
 /*======================*/

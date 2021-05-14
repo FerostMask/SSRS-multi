@@ -107,6 +107,12 @@ void(*menu_pfc[])(unsigned char) = {menu_select, menu2_select};
 unsigned char subuff_num = 0;
 unsigned char subuff_arr[3];
 unsigned short subuff_ranging;
+/*----------------------*/
+/*	 	 串口通信		*/
+/*======================*/
+unsigned char yawa_flag;
+short yawa;
+char buff_get6, buff_get7;
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/

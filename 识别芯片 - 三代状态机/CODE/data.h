@@ -120,6 +120,12 @@ extern unsigned char subuff_num;
 extern unsigned char subuff_arr[3];
 extern unsigned short subuff_ranging;
 /*----------------------*/
+/*	 	 串口通信		*/
+/*======================*/
+extern unsigned char yawa_flag;
+extern short yawa;
+extern char buff_get6, buff_get7;
+/*----------------------*/
 /*	 	 菜单模块		*/
 /*======================*/
 //	一级菜单

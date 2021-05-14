@@ -26,6 +26,7 @@
 #include "data.h"
 #include "pid.h"
 #include "IMU.h"
+#include "MadgwickAHRS.h"
 /*------------------------------*/
 /*		    定时器中断			*/
 /*==============================*/
@@ -81,6 +82,10 @@ void TIM7_IRQHandler (void)
 {
 	uint32 state = TIM7->SR;														// 读取中断状态
 	TIM7->SR &= ~state;																// 清空中断状态
+	MadgwickAHRSupdateIMU(icm_gyro_x/(16.4*57.3), icm_gyro_y/(16.4*57.3), icm_gyro_z/(16.4*57.3), (9.8*icm_acc_x)/8192, (9.8*icm_acc_y)/8192, (9.8*icm_acc_z)/8192);
+	yawa[1] = yawa[0];
+	yawa[0] = atan2(2*(q1*q2 + q0*q3), q0*q0 + q1*q1 -q2*q2 -q3*q3)*57.3;
+	uart_putchar(UART_6, yawa[1]-yawa[0]);
 }
 /*------------------------------*/
 /*		     串口中断			*/
