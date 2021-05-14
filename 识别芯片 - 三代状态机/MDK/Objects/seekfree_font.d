@@ -2,8 +2,8 @@
 .\objects\seekfree_font.o: ..\..\Libraries\seekfree_peripheral\SEEKFREE_FONT.h
 .\objects\seekfree_font.o: ..\..\Libraries\seekfree_libraries\common\common.h
 .\objects\seekfree_font.o: ..\..\Libraries\Device\MM32F327x\Include\reg_common.h
-.\objects\seekfree_font.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\seekfree_font.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\seekfree_font.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\seekfree_font.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\seekfree_font.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
 .\objects\seekfree_font.o: ..\..\Libraries\Device\CMSIS\KEIL_Core\core_cm3.h
 .\objects\seekfree_font.o: ..\..\Libraries\Device\CMSIS\KEIL_Core\cmsis_compiler.h
@@ -19,5 +19,5 @@
 .\objects\seekfree_font.o: ..\..\Libraries\Device\MM32F327x\Include\reg_tim.h
 .\objects\seekfree_font.o: ..\..\Libraries\Device\MM32F327x\Include\reg_uart.h
 .\objects\seekfree_font.o: ..\..\Libraries\Device\MM32F327x\Include\reg_fsmc.h
-.\objects\seekfree_font.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\math.h
-.\objects\seekfree_font.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\seekfree_font.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\seekfree_font.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

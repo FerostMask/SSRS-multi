@@ -45,6 +45,8 @@ unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoint_col[5
 unsigned char lvet_trafcount, rvet_trafcount;//转变点计数
 unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//截止列
 unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;//出口
+//  岔道相关
+unsigned char fork_turn_direction; //0 左 1 右
 //	状态机
 unsigned char act_flag, act_flag_temp, fragile_flag;
 unsigned char state, state_temp;

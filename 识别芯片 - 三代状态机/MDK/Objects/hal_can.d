@@ -1,8 +1,8 @@
 .\objects\hal_can.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Src\hal_can.c
 .\objects\hal_can.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_can.h
 .\objects\hal_can.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
-.\objects\hal_can.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\hal_can.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\hal_can.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\hal_can.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\hal_can.o: ..\..\Libraries\Device\MM32F327x\Include\reg_can.h
 .\objects\hal_can.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_rcc.h
 .\objects\hal_can.o: ..\..\Libraries\Device\MM32F327x\Include\reg_common.h

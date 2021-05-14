@@ -47,6 +47,9 @@ extern unsigned char lvet_trafpoint_row[5], rvet_trafpoint_row[5], lvet_trafpoin
 extern unsigned char lvet_trafcount, rvet_trafcount;
 extern unsigned char leftop_cut, lefbottom_cut, rigtop_cut, rigbottom_cut;//截止列
 extern unsigned char exti_lefp[4], exti_rigp[4], exti_lefcount, exti_rigcount;
+//  岔道相关
+extern unsigned char fork_turn_direction; //0 左 1 右
+extern unsigned cut_fork, cut_fork_bottom;
 //	状态机
 extern unsigned char act_flag, act_flag_temp, fragile_flag;
 extern unsigned short img_color;

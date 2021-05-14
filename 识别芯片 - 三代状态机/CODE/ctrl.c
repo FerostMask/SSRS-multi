@@ -16,7 +16,12 @@
 /*==============================*/
 void cam_ctrl_fork(void){
 //	控制
-	p_target[1] -= 50;
+    p_target[0] = topbor[cut_fork_bottom];
+    if(fork_turn_direction){
+        p_target[1] = (MT9V03X_W + cut_fork_bottom) >> 1;
+    }else{
+        p_target[1] = cut_fork_bottom >> 1;
+    }
 }
 /*------------------------------*/
 /*		   十字控制模块 		*/

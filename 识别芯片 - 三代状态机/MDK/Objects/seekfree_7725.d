@@ -2,8 +2,8 @@
 .\objects\seekfree_7725.o: ..\..\Libraries\seekfree_libraries\zf_exti.h
 .\objects\seekfree_7725.o: ..\..\Libraries\seekfree_libraries\common\common.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\Include\reg_common.h
-.\objects\seekfree_7725.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\seekfree_7725.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\seekfree_7725.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\seekfree_7725.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\CMSIS\KEIL_Core\core_cm3.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\CMSIS\KEIL_Core\cmsis_compiler.h
@@ -19,8 +19,8 @@
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\Include\reg_tim.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\Include\reg_uart.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\Include\reg_fsmc.h
-.\objects\seekfree_7725.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\math.h
-.\objects\seekfree_7725.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\seekfree_7725.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\seekfree_7725.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_exti.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_misc.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_syscfg.h
@@ -49,7 +49,7 @@
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\Include\mm32_reg_redefine_v1.h
 .\objects\seekfree_7725.o: ..\..\Libraries\seekfree_libraries\zf_systick.h
 .\objects\seekfree_7725.o: ..\..\Libraries\seekfree_libraries\zf_uart.h
-.\objects\seekfree_7725.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\seekfree_7725.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_uart.h
 .\objects\seekfree_7725.o: ..\..\Libraries\seekfree_libraries\zf_gpio.h
 .\objects\seekfree_7725.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_gpio.h

@@ -71,22 +71,31 @@ void binary_disp(void){
 		ips200_drawpoint(i, topbor[i], 0xFD10);
 //	显示岔道边线
 	for(i = 17; i < cut_fork; i++)
-		ips200_drawpoint(i, topbor[i], 0xA759);
+		ips200_drawpoint(i, topbor[i], RED);
+//    for(i = 0; i < MT9V03X_W; i++)
+//        ips200_drawpoint(i, cut_fork_bottom-4 , BLUE);
+    
 //	显示状态		
-	ips200_showint16(160, 0, state);
-	ips200_showint16(160, 1, act_flag);
+	ips200_showint16(160, 7, state);
+	ips200_showint16(160, 8, act_flag);
 //	显示目标点
 	ips200_drawpoint(p_target[1]+2, p_target[0], 0xED2A);
 	ips200_drawpoint(p_target[1]-2, p_target[0], 0xED2A);
 	ips200_drawpoint(p_target[1], p_target[0], 0xED2A);
 	ips200_drawpoint(p_target[1], p_target[0]+2, 0xED2A);
 	ips200_drawpoint(p_target[1], p_target[0]-2, 0xED2A);
-
+//	显示岔道目标点
+	ips200_drawpoint(cut_fork_bottom+2, topbor[cut_fork_bottom], BLUE);
+	ips200_drawpoint(cut_fork_bottom-2, topbor[cut_fork_bottom], BLUE);
+	ips200_drawpoint(cut_fork_bottom, topbor[cut_fork_bottom], BLUE);
+	ips200_drawpoint(cut_fork_bottom, topbor[cut_fork_bottom]+2, BLUE);
+	ips200_drawpoint(cut_fork_bottom, topbor[cut_fork_bottom]-2, BLUE);  
+    
 	ips200_showint16(170, 2, show_value[0]);
 	ips200_showint16(170, 3, show_value[1]);
-//	ips200_showint16(170, 4, show_value[2]);
-//	ips200_showint16(170, 5, show_value[3]);
-//	ips200_showint16(170, 6, show_value[4]);
+	ips200_showint16(170, 4, show_value[2]);
+	ips200_showint16(170, 5, show_value[3]);
+	ips200_showint16(170, 6, show_value[4]);
 	
 //	ips200_showfloat(170, 1, show_value[0], 2, 2);
 //	ips200_showfloat(170, 2, show_value[1], 2, 2);
@@ -106,17 +115,22 @@ void state_machine(void){
 //	初始化
 	state_temp = state, state = 0;
 	cut_fork = 0;
+//  岔道
+    vertsearch_frok();
+    if(state == 31 )return;
+
+    
 //	检测赛道类型
 	if(!exti_lefcount)
 		if(!exti_rigcount){//没有出口 | 直道 | 弯道丢边 | 弯入岔道
 			if(abs(found_point[0]-rcut)<5)
 				if(abs(found_point[0] - found_point[2])>45) {state = 1;return;}
-				else {state = 31;return;}
-//				else {vertsearch_frok();if(topbor[cut_fork_bottom]>90) state = 31;return;}
+//				else {state = 31;return;}
+				else {vertsearch_frok();if(topbor[cut_fork_bottom]>60) state = 31;return;}
 			if(abs(found_point[2]-lcut)<5)
 				if(abs(found_point[0] - found_point[2])>45) {state = 2;return;}
-				else {state = 31;return;}
-//				else {vertsearch_frok();if(topbor[cut_fork_bottom]>90) state = 31;return;}
+//				else {state = 31;return;}
+				else {vertsearch_frok();if(topbor[cut_fork_bottom]>60) state = 31;return;}
 		}
 	if(exti_lefcount)
 		if(!exti_rigcount){//只有左边有出口 | 左弯 | 左环 | 十字丢边
@@ -226,15 +240,15 @@ void state_machine_enter(void){
 		case 4:
 			act_flag = 4, state_flag = 1, img_color = 0x7EFE;
 			return;
-	//	圆环
-		case 12:
-			act_flag = 12, state_flag = 2, img_color = 0x8CF6;
-			return;
+//	//	圆环
+//		case 12:
+//			act_flag = 12, state_flag = 2, img_color = 0x8CF6;
+//			return;
 	//	十字、十字丢边
 	//	岔道
-//		case 31:
-//			act_flag = 31, state_flag = 4, img_color = 0xEFBE;
-//			return;
+		case 31:
+			act_flag = 31, state_flag = 4, img_color = 0xEFBE;
+			return;
 	}
 }
 /*------------------------------*/
@@ -357,40 +371,94 @@ void vert_slope_cal(char num){//点太少不要执行这个函数
 /*	  	岔道边界点寻找模块		*/
 /*==============================*/
 void vertsearch_frok(void){
-//	变量定义
+//	**变量定义**
 	register unsigned char i;
 	register char j, k;
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
 	unsigned char *p;
 	unsigned char found_flag, view_temp;
 	unsigned char bottom_point, bottom_cut;
-//	寻找边界基点
+    unsigned char cnt_level_change_points;
+    unsigned char cnt_left=0, cnt_right=0;//数左右倾斜
+    unsigned char flag[2];
+//	**寻找边界基点**
 	cut_fork_bottom = 0, bottom_cut = 0;
-	p = &binary_img[MT9V03X_H-2][9];
-	for(i = MT9V03X_H-4; i > 0; i--, p-=col){
-		if(*(uint16*)p == 0xff) continue;
+	p = &binary_img[MT9V03X_H-1][9];
+    
+	for(i = MT9V03X_H-1; i > 0; i--, p-=col){
+		if(*(unsigned int *)p == 0xffffffff) continue;
 		bottom_point = i;
 		break;
 	}
-	if(i < 30) return;
-	for(j = 2; j < 18; j++){
+	if(i < 25 || i > 90) return;
+//  **基点所在行跳变点计数**
+    cnt_level_change_points = 0;
+    p = &binary_img[i-4][2];
+    for(j = 2; j < 18; j++,p++){//换列
+    //	一般情况
+        if(*(uint16*)p == 0x0000) continue;//全黑
+        if(*(uint16*)p == 0xffff) continue;//全白
+ 		if(*p != 0x00)
+			if(*p != 0xff){//左突变
+				for(k = 7; k > 0; k--){
+                    if( ( ((*p>>k)&0x01)==1 ) && ( ((*p>>(k-1))&0x01)==0 ) ){flag[0]++;continue;}//白黑跳变
+                    if((((*p>>k)&0x01)==0)&&(((*p>>(k-1))&0x01)==1)){flag[1]++;continue;}//黑白跳变
+                }
+					continue;
+			}
+		if(*(p+1) != 0x00)
+			if(*(p+1) != 0xff){//左突变
+				for(k = 7; k > 0; k--){
+                    if((((*p>>k)&0x01)==1)&&(((*p>>(k-1))&0x01)==0)){flag[0]++;continue;}//白黑跳变
+                    if((((*p>>k)&0x01)==0)&&(((*p>>(k-1))&0x01)==1)){flag[1]++;continue;}//黑白跳变
+                }
+					continue;
+			}
+    //	特殊情况
+        if(*(uint16*)p == 0x00FF){flag[0]++;continue;}//左白右黑跳变
+		else if(*(uint16*)p == 0xFF00){flag[1]++;continue;}//左黑右白跳变
+    }
+    cnt_level_change_points = flag[0]+flag[1];
+    show_value[2] = flag[0];    
+    show_value[3] = flag[1];  
+    show_value[4] = cnt_level_change_points;  
+//  **寻找边界**
+
+	for(j = 3; j < 17; j++){
 		found_flag = 0, p = &binary_img[bottom_point][j];
-		for(i = bottom_point; i > 0; i--, p-=col){
+		for(i = bottom_point; i > 0; i--, p-=col ){
 			view_temp = *(p)^*(p+col);
 			for(k = 7; k > -1; k--){
 				if(!((found_flag>>k)&0x01))
 					if((view_temp>>k)&0x01){
+                        if( k ){
+                            if(j>9)//右边
+                            
+                                 if(abs(i - topbor[(j<<3)+7-k-1]) > 3 || (i > topbor[(j<<3)+7-k-1]) ){//间隔大 | 左点在右点的上面
+                                    continue;
+                                 }
+                                 else cnt_right++;
+                            else 
+                                if(abs(i - topbor[(j<<3)+7-k-1]) > 3 || (i < topbor[(j<<3)+7-k-1]) ){//间隔大 | 左点在右点的下面
+                                    continue;
+                                 }
+                                 else cnt_left++;
+                        }
 						topbor[(j<<3)+7-k] = i;
+                        if(i > bottom_cut) bottom_cut = i, cut_fork_bottom = (j<<3)+7-k;
 						if(cut_fork < (j<<3)+7-k) cut_fork =(j<<3)+7-k;
 					}
 			}
-			if(i > bottom_cut) bottom_cut = i, cut_fork_bottom = (j<<3)+7;
 			found_flag |= view_temp;
 			if(found_flag == 0xFF) break;
 			if(*(p+col) == 0x00) break;
 		}
 		if(found_flag != 0xFF) break;	
 	}
+/********** 终点、岔道判断开始 **********/    
+    if(abs(cnt_left-cnt_right) < 10 && cnt_left > 15 && cnt_right > 15){
+            state = 31;
+    }
 }
 /*------------------------------*/
 /*	  垂直边界点寻找模块（左）	*/

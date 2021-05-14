@@ -1,7 +1,7 @@
 .\objects\hal_fsmc.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Src\hal_fsmc.c
 .\objects\hal_fsmc.o: ..\..\Libraries\Device\MM32F327x\Include\reg_rcc.h
-.\objects\hal_fsmc.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\hal_fsmc.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\hal_fsmc.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\hal_fsmc.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\hal_fsmc.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
 .\objects\hal_fsmc.o: ..\..\Libraries\Device\MM32F327x\Include\reg_syscfg.h
 .\objects\hal_fsmc.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_fsmc.h

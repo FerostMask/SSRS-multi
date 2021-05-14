@@ -559,10 +559,10 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\startup_mm32f327x_keil.d -o.\objects\startup_mm32f327x_k
-eil.o -I.\RTE\_MM32F3277_Demo -ID:\Software\Keil_MDK5\ARM\CMSIS\Include --prede
-fine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 528" --list=.\list
-ings\startup_mm32f327x_keil.lst ..\..\Libraries\Device\MM32F327x\Source\KEIL_St
-artAsm\startup_mm32f327x_keil.s
+eil.o -I.\RTE\_MM32F3277_Demo -IC:\1install\Keil_v5\ARM\CMSIS\Include --predefi
+ne="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 530" --predefine="_R
+TE_ SETA 1" --list=.\listings\startup_mm32f327x_keil.lst ..\..\Libraries\Device
+\MM32F327x\Source\KEIL_StartAsm\startup_mm32f327x_keil.s
 
 
 
@@ -1722,4 +1722,4 @@ Symbol: __main
 \startup_mm32f327x_keil.s
 Comment: __main used once
 2 symbols
-423 symbols in table
+424 symbols in table

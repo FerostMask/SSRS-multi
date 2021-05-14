@@ -1,7 +1,7 @@
 .\objects\hal_sdio.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Src\hal_sdio.c
 .\objects\hal_sdio.o: ..\..\Libraries\Device\MM32F327x\Include\reg_sdio.h
-.\objects\hal_sdio.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\hal_sdio.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\hal_sdio.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\hal_sdio.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\hal_sdio.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\HAL_device.h
 .\objects\hal_sdio.o: ..\..\Libraries\Device\MM32F327x\Include\mm32_device.h
 .\objects\hal_sdio.o: ..\..\Libraries\Device\MM32F327x\Include\mm32_reg.h

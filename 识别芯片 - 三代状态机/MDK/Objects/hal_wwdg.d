@@ -1,8 +1,8 @@
 .\objects\hal_wwdg.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Src\hal_wwdg.c
 .\objects\hal_wwdg.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_wwdg.h
 .\objects\hal_wwdg.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
-.\objects\hal_wwdg.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\hal_wwdg.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\hal_wwdg.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\hal_wwdg.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\hal_wwdg.o: ..\..\Libraries\Device\MM32F327x\Include\reg_wwdg.h
 .\objects\hal_wwdg.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_rcc.h
 .\objects\hal_wwdg.o: ..\..\Libraries\Device\MM32F327x\Include\reg_common.h

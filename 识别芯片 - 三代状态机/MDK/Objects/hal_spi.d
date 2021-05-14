@@ -1,9 +1,9 @@
 .\objects\hal_spi.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Src\hal_spi.c
-.\objects\hal_spi.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\hal_spi.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\hal_spi.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_spi.h
 .\objects\hal_spi.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
-.\objects\hal_spi.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\hal_spi.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\hal_spi.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\hal_spi.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\hal_spi.o: ..\..\Libraries\Device\MM32F327x\Include\reg_spi.h
 .\objects\hal_spi.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_rcc.h
 .\objects\hal_spi.o: ..\..\Libraries\Device\MM32F327x\Include\reg_common.h

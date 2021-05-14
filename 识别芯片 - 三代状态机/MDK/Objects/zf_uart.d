@@ -1,10 +1,10 @@
 .\objects\zf_uart.o: ..\..\Libraries\seekfree_libraries\zf_uart.c
 .\objects\zf_uart.o: ..\..\Libraries\seekfree_libraries\zf_uart.h
-.\objects\zf_uart.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\zf_uart.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\zf_uart.o: ..\..\Libraries\seekfree_libraries\common\common.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\Include\reg_common.h
-.\objects\zf_uart.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\zf_uart.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\zf_uart.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\zf_uart.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\CMSIS\KEIL_Core\core_cm3.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\CMSIS\KEIL_Core\cmsis_compiler.h
@@ -20,8 +20,8 @@
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\Include\reg_tim.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\Include\reg_uart.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\Include\reg_fsmc.h
-.\objects\zf_uart.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\math.h
-.\objects\zf_uart.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\zf_uart.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\zf_uart.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_uart.h
 .\objects\zf_uart.o: ..\..\Libraries\seekfree_libraries\zf_gpio.h
 .\objects\zf_uart.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_gpio.h

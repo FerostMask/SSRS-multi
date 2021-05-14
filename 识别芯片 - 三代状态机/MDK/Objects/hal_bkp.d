@@ -1,7 +1,7 @@
 .\objects\hal_bkp.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Src\hal_bkp.c
 .\objects\hal_bkp.o: ..\..\Libraries\Device\MM32F327x\Include\types.h
-.\objects\hal_bkp.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\hal_bkp.o: D:\Software\Keil_MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\hal_bkp.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\hal_bkp.o: C:\1install\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\hal_bkp.o: ..\..\Libraries\Device\MM32F327x\HAL_Lib\Inc\hal_pwr.h
 .\objects\hal_bkp.o: ..\..\Libraries\Device\MM32F327x\Include\reg_pwr.h
 .\objects\hal_bkp.o: ..\..\Libraries\Device\MM32F327x\Include\reg_syscfg.h
