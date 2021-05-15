@@ -54,6 +54,8 @@ extern unsigned char state, state_temp;
 extern unsigned char state_flag;
 extern void(*state_pfc[])(void);
 //	øÿ÷∆œ‡πÿ
+extern unsigned char folrow_f;
+extern char folc_flag, cooling_flag;
 extern short p_target[2];
 extern short error_flit[8], ctrl_error1, ctrl_error2;
 extern short spd_slow;

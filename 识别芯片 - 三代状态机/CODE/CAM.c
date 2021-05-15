@@ -138,17 +138,18 @@ void state_machine(void){
 				{state = 3;return;}//左弯
 		//	有直道延伸
 			if(lefhigh > 4)//9
-				if(lefhigh < 23){//环道判断
-					if(found_point[2] > exti_lefp[0]+10)
-						slope_cal(3);
-						if(abs(line_slope_diff) < 120){//判断右边是直线
-							if(lef_botrate < -260 && lef_toprate < 70)
-								if(lef_widrate > 46)
-									{state = 12;return;}
-							if((topbor[0]-topbor[leftop_cut>>1])+(topbor[leftop_cut>>1]-topbor[leftop_cut]) > 6)
-								{state = 11;return;}
-						}
-				}
+				if(!cooling_flag)
+					if(lefhigh < 23){//环道判断
+						if(found_point[2] > exti_lefp[0]+10)
+							slope_cal(3);
+							if(abs(line_slope_diff) < 120){//判断右边是直线
+								if(lef_botrate < -260 && lef_toprate < 70)
+									if(lef_widrate > 46)
+										{state = 12;return;}
+								if((topbor[0]-topbor[leftop_cut>>1])+(topbor[leftop_cut>>1]-topbor[leftop_cut]) > 6)
+									{state = 11;return;}
+							}
+					}
 	}
 	if(exti_rigcount)
 		if(!exti_lefcount){//只有右边有出口 | 右弯 | 右环 | 十字丢边 | 环道出口
@@ -192,6 +193,8 @@ void state_machine_ring(void){
 		case 14://出环 -> 环外
 			if(state == 14)
 				act_flag = 0, yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
+				cooling_flag = 1;
+				tim_interrupt_init_ms(TIM_3, 3000, 0, 0);
 			return;
 	}
 }

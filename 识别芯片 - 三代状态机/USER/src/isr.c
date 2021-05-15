@@ -55,8 +55,18 @@ void TIM2_IRQHandler (void)
 	for(i = 6; i > -1; i--) error_flit[i+1] = error_flit[i];
 	ctrl_error2 = ctrl_error1;
 	ctrl_error1 = abs(80 - p_target[1]);
-	error_flit[0] =  abs(ctrl_error2-ctrl_error1);
+	error_flit[0] =  abs(ctrl_error2*ctrl_error2-ctrl_error1*ctrl_error2);
 	spd_slow = (error_flit[0]+error_flit[1]+error_flit[2]+error_flit[3]+error_flit[4]+error_flit[5]+error_flit[6]+error_flit[7])>>3;
+/*----------------------*/
+/*	 	 循迹部分		*/
+/*======================*/
+	spd_adcset = 50, folc_flag = 1;
+	ctrl_pfc[state_flag]();
+	if(folc_flag) p_target[0] = folrow_f, p_target[1] = (lefbor[folrow_f]+rigbor[folrow_f])>>1;
+	pos_pid(&cam_steering, 80, p_target[1], 120, -120);
+	uart_putchar(UART_7, cam_steering.rs);
+	spd = spd_adcset;
+	uart_putchar(UART_6, spd+spd_bias);
 /*----------------------*/
 /*	 	 电磁部分		*/
 /*======================*/
@@ -96,8 +106,7 @@ void TIM3_IRQHandler (void)
 	uint32 state = TIM3->SR;														// 读取中断状态
 	TIM3->SR &= ~state;																// 清空中断状态
 //	代码编写区域
-	if(act_flag_temp == act_flag) act_flag = 0, img_color = 0xAE9C;
-	fragile_flag = 0;
+	cooling_flag = 0;
 	tim_interrupt_disabnle(TIM_3);
 }
 //	编码器
