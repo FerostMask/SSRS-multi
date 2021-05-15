@@ -146,7 +146,10 @@ void state_machine(void){
 								if(lef_botrate < -260 && lef_toprate < 70)
 									if(lef_widrate > 46)
 										{state = 12;return;}
-								if((topbor[0]-topbor[leftop_cut>>1])+(topbor[leftop_cut>>1]-topbor[leftop_cut]) > 6)
+							//	未检测到入环口，判断是否为出环口
+								lef_toprate = (topbor[0]-topbor[leftop_cut>>1]);//借用变量存储
+								lef_botrate = (topbor[leftop_cut>>1]-topbor[leftop_cut]);
+								if(lef_toprate*lef_toprate-lef_botrate*lef_botrate < -24)
 									{state = 11;return;}
 							}
 					}
@@ -182,6 +185,9 @@ void state_machine_cross(void){
 /*==============================*/
 void state_machine_ring(void){
 	switch(act_flag){
+		case 11://出环口 -> 入环
+			if(state == 12)
+				act_flag = 12, img_color = 0x8CF6;
 		case 12://入环 -> 环内
 			if(state == 1)
 				act_flag = 13, img_color = 0x46D0;
@@ -241,6 +247,11 @@ void state_machine_enter(void){
 			act_flag = 4, state_flag = 1, img_color = 0x7EFE;
 			return;
 	//	圆环
+		case 11://检测到圆环出口 | 脆弱状态
+			act_flag = 11, state_flag = 2, img_color = 0x0250;
+			act_flag_temp = act_flag;
+			tim_interrupt_init_ms(TIM_3, 2000, 0, 0);//状态计时
+			return;
 		case 12:
 			act_flag = 12, state_flag = 2, img_color = 0x8CF6;
 			return;

@@ -45,12 +45,12 @@ int main(void){
 	ips200_init();
 	mt9v03x_init();
 //	引脚状态初始化
-	gpio_init(B9, GPO, GPIO_HIGH, GPO_PUSH_PULL);
+//	gpio_init(B9, GPO, GPIO_HIGH, GPO_PUSH_PULL);
 //	串口初始化
 	uart_init(UART_7, 115200, UART7_TX_B06, UART7_RX_B07);
 	uart_init(UART_6, 115200, UART6_TX_C06, UART6_RX_C07);
-//	uart_init(UART_3, 115200, UART3_TX_B10, UART3_RX_B11);
-//	uart_rx_irq(UART_3, 1);
+	uart_init(UART_3, 115200, UART3_TX_B10, UART3_RX_B11);
+	uart_rx_irq(UART_3, 1);
 	uart_rx_irq(UART_6, 1);
 /*----------------------*/
 /*	 	 用户初始化		*/

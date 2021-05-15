@@ -34,6 +34,10 @@ void cam_ctrl_ring(void){
 	float slope_temp;
 //	控制
 	switch(act_flag){
+		case 11:
+			p_target[1] = 80;
+			folc_flag = 0;
+			break;
 		case 12:
 //			p_target[1]-=14;
 			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(300>>(spd_adcset>>4));
@@ -44,7 +48,7 @@ void cam_ctrl_ring(void){
 		case 14:
 			mp = ((((99+rcut)>>1)+rcut)>>1);
 			slope_temp = (float)(rcut-found_point[2])/found_point[3];
-			p_target[0] = mp, p_target[1] = ((float)(rcut-mp)/slope_temp)+45;
+			p_target[0] = mp, p_target[1] = ((float)(rcut-mp)/slope_temp)+44;
 			folc_flag = 0;
 //			p_target[1]-=20;
 			break;
@@ -60,7 +64,7 @@ void cam_ctrl_bend(void){
 	unsigned char mp;
 	float slope_temp;
 //	控制
-	spd_adcset = 70-(spd_slow>>1);
+	spd_adcset = 80-(spd_slow>>1);
 	switch(act_flag){
 		case 1:
 			folrow_f = 47;
@@ -97,7 +101,7 @@ void cam_ctrl_direct(void){
 //	变量定义
 	unsigned char point_temp;
 //	控制
-	spd_adcset = 70;
+	spd_adcset = 80-(spd_slow>>1);
 	if(exti_lefcount > 0)
 		if(!exti_rigcount)
 			spd_adcset = 60;
