@@ -35,6 +35,7 @@ struct pidpara rmor;
 /*======================*/
 short blcp = 23;
 short pita;
+short yawa[2];
 short gy, gz;
 short yfilt[4] = {0, 0, 0, 0};
 short pflit[4] = {0, 0, 0, 0};
@@ -87,7 +88,7 @@ void Init_para(void){
 	rmor.rs = 0;	
 //	转向
 	steer.alpha = 0.1;
-	steer.Kp = 36;//反应快慢 | 超调
+	steer.Kp = 24;//反应快慢 | 超调
 	steer.Ki = 0;//反应力度
 	steer.Kd = 6.4;
 	steer.I = 0;

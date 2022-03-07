@@ -29,16 +29,28 @@ void cam_ctrl_cross(void){
 /*		   环道控制模块 		*/
 /*==============================*/
 void cam_ctrl_ring(void){
+//	变量定义
+	unsigned char mp;
+	float slope_temp;
 //	控制
 	switch(act_flag){
+		case 11:
+			p_target[1] = 80;
+			folc_flag = 0;
+			break;
 		case 12:
 //			p_target[1]-=14;
 			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(300>>(spd_adcset>>4));
+			folc_flag = 0;
 			break;
 		case 13:
 			break;
 		case 14:
-			p_target[1]-=50;
+			mp = ((((99+rcut)>>1)+rcut)>>1);
+			slope_temp = (float)(rcut-found_point[2])/found_point[3];
+			p_target[0] = mp, p_target[1] = ((float)(rcut-mp)/slope_temp)+44;
+			folc_flag = 0;
+//			p_target[1]-=20;
 			break;
 		case 15:
 			break;
@@ -52,19 +64,23 @@ void cam_ctrl_bend(void){
 	unsigned char mp;
 	float slope_temp;
 //	控制
-	spd_adcset = 50-(spd_slow>>1);
+	spd_adcset = 80-(spd_slow>>1);
 	switch(act_flag){
 		case 1:
-			p_target[1] -=5;
+			folrow_f = 47;
+//			p_target[1] -=5;
 			break;
 		case 2:
-			p_target[1] +=5;
+			folrow_f = 47;
+//			p_target[1] +=5;
 			break;
 		case 3:
-			p_target[1] -=3;
+			folrow_f = 36;
+//			p_target[1] -=3;
 			break;
 		case 4:
-			p_target[1] +=3;
+			folrow_f = 36;
+//			p_target[1] +=3;
 			break;
 	}
 //	if(act_flag == 2){//右转
@@ -85,10 +101,13 @@ void cam_ctrl_direct(void){
 //	变量定义
 	unsigned char point_temp;
 //	控制
-	spd_adcset = 70;
+	spd_adcset = 80-(spd_slow>>1);
 	if(exti_lefcount > 0)
 		if(!exti_rigcount)
-			spd_adcset = 50;
+			spd_adcset = 60;
+	if(exti_rigcount > 0)
+		if(!exti_lefcount)
+			spd_adcset = 60;
 //	if(ltraf_count)
 //		if(rtraf_count){
 //			if(ltraf_count > rtraf_count) point_temp = ltraf_point_row[ltraf_count-1]-2;

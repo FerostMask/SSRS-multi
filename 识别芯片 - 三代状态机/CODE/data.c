@@ -52,6 +52,8 @@ unsigned char state_flag;
 unsigned short img_color = 0xAE9C;
 void(*state_pfc[])(void) = {state_machine_enter, state_machine_bend, state_machine_ring, state_machine_cross, state_machine_fork};
 //	控制相关
+unsigned char folrow_f = 63;
+char folc_flag, cooling_flag;
 short p_target[2];
 short error_flit[8], ctrl_error1, ctrl_error2;
 short spd_slow;
@@ -107,6 +109,12 @@ void(*menu_pfc[])(unsigned char) = {menu_select, menu2_select};
 unsigned char subuff_num = 0;
 unsigned char subuff_arr[3];
 unsigned short subuff_ranging;
+/*----------------------*/
+/*	 	 串口通信		*/
+/*======================*/
+unsigned char yawa_flag;
+short yawa;
+char buff_get6, buff_get7;
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/

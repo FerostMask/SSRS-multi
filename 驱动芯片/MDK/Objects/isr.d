@@ -95,3 +95,4 @@
 .\objects\isr.o: ..\CODE\menu_2.h
 .\objects\isr.o: ..\CODE\pid.h
 .\objects\isr.o: ..\CODE\IMU.h
+.\objects\isr.o: ..\CODE\MadgwickAHRS.h

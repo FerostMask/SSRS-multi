@@ -54,6 +54,8 @@ extern unsigned char state, state_temp;
 extern unsigned char state_flag;
 extern void(*state_pfc[])(void);
 //	控制相关
+extern unsigned char folrow_f;
+extern char folc_flag, cooling_flag;
 extern short p_target[2];
 extern short error_flit[8], ctrl_error1, ctrl_error2;
 extern short spd_slow;
@@ -119,6 +121,12 @@ extern struct pidpara cam_steering;
 extern unsigned char subuff_num;
 extern unsigned char subuff_arr[3];
 extern unsigned short subuff_ranging;
+/*----------------------*/
+/*	 	 串口通信		*/
+/*======================*/
+extern unsigned char yawa_flag;
+extern short yawa;
+extern char buff_get6, buff_get7;
 /*----------------------*/
 /*	 	 菜单模块		*/
 /*======================*/
